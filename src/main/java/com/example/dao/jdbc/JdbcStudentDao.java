@@ -13,7 +13,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -40,8 +39,8 @@ public class JdbcStudentDao implements StudentDao {
     private final RowMapper<Student> studentRowMapper;
 
     @Autowired
-    public JdbcStudentDao(DataSource dataSource, RowMapper<Student> studentRowMapper) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public JdbcStudentDao(JdbcTemplate jdbcTemplate, RowMapper<Student> studentRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
         this.studentRowMapper = studentRowMapper;
     }
 

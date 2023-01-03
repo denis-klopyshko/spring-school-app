@@ -2,6 +2,7 @@ package com.example.dao.jdbc;
 
 import com.example.dao.CourseDao;
 import com.example.entity.Course;
+import com.example.mapper.CourseRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,7 +10,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
+import javax.print.CancelablePrintJob;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +32,9 @@ public class JdbcCourseDao implements CourseDao {
     private final RowMapper<Course> courseRowMapper;
 
     @Autowired
-    public JdbcCourseDao(DataSource dataSource, RowMapper<Course> courseRowMapper) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.courseRowMapper = courseRowMapper;
+    public JdbcCourseDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.courseRowMapper = new CourseRowMapper();
     }
 
     @Override

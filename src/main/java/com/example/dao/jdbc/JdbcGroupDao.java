@@ -2,14 +2,14 @@ package com.example.dao.jdbc;
 
 import com.example.dao.GroupDao;
 import com.example.entity.Group;
-import lombok.RequiredArgsConstructor;
+import com.example.mapper.GroupRowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +28,12 @@ public class JdbcGroupDao implements GroupDao {
                     "ON s.group_id = g.group_id " +
                     "GROUP BY g.group_id " +
                     "HAVING COUNT(*) <= ?";
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Group> groupRowMapper;
+    private JdbcTemplate jdbcTemplate;
+    private final RowMapper<Group> groupRowMapper = new GroupRowMapper();
 
-    public JdbcGroupDao(DataSource dataSource, RowMapper<Group> groupRowMapper) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.groupRowMapper = groupRowMapper;
+    @Autowired
+    public JdbcGroupDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override

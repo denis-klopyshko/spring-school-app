@@ -1,14 +1,14 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/school?currentSchema=student_db
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:school}?currentSchema=${DB_SCHEMA_NAME:student_db}
     username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:310892}
+    password: ${DB_PASSWORD:root}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 5
   flyway:
     enabled: true
     schemas:
-      - student_db
+      - ${DB_SCHEMA_NAME:student_db}
     baseline-on-migrate: true
     baseline-version: 1

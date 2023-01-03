@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.entity.Group;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +33,14 @@ class GroupDaoTest extends BaseDaoTest {
 
     @Test
     void shouldDeleteById() {
+        assertTrue(groupDao.findById(103L).isPresent());
+        assertTrue(groupDao.deleteById(103L));
+    }
+
+    @Test
+    void shouldNotDeleteByIdThrowsException() {
         assertTrue(groupDao.findById(101L).isPresent());
-        assertTrue(groupDao.deleteById(101L));
+        assertThrows(DataIntegrityViolationException.class, () -> groupDao.deleteById(101L));
     }
 
     @Test
@@ -46,7 +53,7 @@ class GroupDaoTest extends BaseDaoTest {
         Group expectedBeforeUpdate = new Group(101L, "GR-11");
         assertEquals(expectedBeforeUpdate, groupDao.findById(101L).get());
 
-        Group expectedAfterUpdate = new Group(101L, "GR-13");
+        Group expectedAfterUpdate = new Group(101L, "GR-14");
         groupDao.update(expectedAfterUpdate);
         assertEquals(expectedAfterUpdate, groupDao.findById(101L).get());
     }
@@ -56,7 +63,8 @@ class GroupDaoTest extends BaseDaoTest {
         List<Group> expected = Arrays.asList(
                 new Group(100L, "GR-10"),
                 new Group(101L, "GR-11"),
-                new Group(102L, "GR-12")
+                new Group(102L, "GR-12"),
+                new Group(103L, "GR-13")
         );
         List<Group> actual = groupDao.findAll();
         assertEquals(expected, actual);

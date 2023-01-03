@@ -113,8 +113,10 @@ public class JdbcStudentDao implements StudentDao {
 
     private PreparedStatement prepareUpdateStatement(Connection connection, Student student) {
         try {
-            var insertStatement = connection.prepareStatement(UPDATE_SQL, new String[]{"student_id"});
-            return fillStatementWithAccountData(insertStatement, student);
+            var updateStatement = connection.prepareStatement(UPDATE_SQL, new String[]{"student_id"});
+            fillStatementWithAccountData(updateStatement, student);
+            updateStatement.setLong(4, student.getId());
+            return updateStatement;
         } catch (SQLException e) {
             throw new DaoOperationException("Cannot prepare statement to update student", e);
         }
@@ -136,7 +138,6 @@ public class JdbcStudentDao implements StudentDao {
 
         insertStatement.setString(2, student.getFirstName());
         insertStatement.setString(3, student.getLastName());
-        insertStatement.setLong(4, student.getId());
         return insertStatement;
     }
 }

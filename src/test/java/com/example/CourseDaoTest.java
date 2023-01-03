@@ -17,7 +17,7 @@ class CourseDaoTest extends BaseDaoTest {
 
     @Test
     void shouldFindCourseById() {
-        Course expected = new Course(100L, "Biology", "Biology Description");
+        Course expected = new Course(100L, "Math", "Math Description");
         Optional<Course> actual = courseDao.findById(100L);
         assertTrue(actual.isPresent());
         assertEquals(expected, actual.get());

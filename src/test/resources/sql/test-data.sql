@@ -1,7 +1,8 @@
 INSERT INTO groups (group_id, group_name)
 VALUES (100, 'GR-10'),
        (101, 'GR-11'),
-       (102, 'GR-12');
+       (102, 'GR-12'),
+       (103, 'GR-13');
 
 INSERT INTO courses (course_id, course_name, course_description)
 VALUES (100, 'Math', 'Math Description'),

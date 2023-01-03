@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/school?currentSchema=student_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:310892}
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5
+  flyway:
+    enabled: true
+    schemas:
+      - student_db
+    baseline-on-migrate: true
+    baseline-version: 1

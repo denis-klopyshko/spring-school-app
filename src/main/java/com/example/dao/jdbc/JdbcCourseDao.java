@@ -10,7 +10,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.print.CancelablePrintJob;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
@@ -29,12 +28,11 @@ public class JdbcCourseDao implements CourseDao {
             "WHERE sc.student_id = ?";
 
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Course> courseRowMapper;
+    private final RowMapper<Course> courseRowMapper = new CourseRowMapper();
 
     @Autowired
     public JdbcCourseDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.courseRowMapper = new CourseRowMapper();
     }
 
     @Override

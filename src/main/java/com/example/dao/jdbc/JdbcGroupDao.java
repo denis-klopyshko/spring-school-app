@@ -21,13 +21,7 @@ public class JdbcGroupDao implements GroupDao {
     private static final String DELETE_SQL = "DELETE FROM groups WHERE group_id = ?";
     private static final String FIND_ALL_SQL = "SELECT group_id, group_name FROM groups";
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE group_id = ?";
-    private static final String GET_BY_STUDENTS_COUNT_SQL =
-            "SELECT g.group_id, g.group_name " +
-                    "FROM groups g " +
-                    "LEFT JOIN students s " +
-                    "ON s.group_id = g.group_id " +
-                    "GROUP BY g.group_id " +
-                    "HAVING COUNT(*) <= ?";
+
     private JdbcTemplate jdbcTemplate;
     private final RowMapper<Group> groupRowMapper = new GroupRowMapper();
 

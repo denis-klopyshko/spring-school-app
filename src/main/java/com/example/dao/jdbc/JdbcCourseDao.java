@@ -2,7 +2,7 @@ package com.example.dao.jdbc;
 
 import com.example.dao.CourseDao;
 import com.example.entity.Course;
-import com.example.mapper.CourseRowMapper;
+import com.example.dao.mapper.CourseRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,11 +21,13 @@ public class JdbcCourseDao implements CourseDao {
     private static final String UPDATE_SQL = "UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?";
     private static final String FIND_ALL_SQL = "SELECT course_id, course_name, course_description FROM courses";
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE course_id = ?";
+    private static final String FIND_BY_NAME_SQL = FIND_ALL_SQL + " WHERE course_name = ?";
     private static final String FIND_COURSES_BY_STUDENT_ID_SQL = "" +
             "SELECT c.course_id, c.course_name, c.course_description " +
             "FROM courses c " +
             "INNER JOIN students_courses sc ON c.course_id = sc.course_id " +
             "WHERE sc.student_id = ?";
+    private static final String COUNT_RECORDS_SQL = "SELECT count(*) FROM courses";
 
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Course> courseRowMapper = new CourseRowMapper();
@@ -56,6 +58,14 @@ public class JdbcCourseDao implements CourseDao {
     }
 
     @Override
+    public Optional<Course> findByName(String name) {
+        return jdbcTemplate
+                .query(FIND_BY_NAME_SQL, courseRowMapper, name)
+                .stream()
+                .findFirst();
+    }
+
+    @Override
     public Course create(Course course) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(
@@ -77,8 +87,13 @@ public class JdbcCourseDao implements CourseDao {
     }
 
     @Override
-    public boolean deleteById(Long id) {
+    public void deleteById(Long id) {
+        jdbcTemplate.update(DELETE_SQL, id);
+    }
+
+    @Override
+    public Long count() {
         return jdbcTemplate
-                .update(DELETE_SQL, id) == 1;
+                .queryForObject(COUNT_RECORDS_SQL, Long.class);
     }
 }

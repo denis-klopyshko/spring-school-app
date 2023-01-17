@@ -7,16 +7,16 @@ import java.util.List;
 
 @Data
 @Builder
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 public class Student {
     private Long id;
     private Group group;
     private String firstName;
     private String lastName;
 
-    @Singular
+    @Builder.Default
     private List<Course> courses = new ArrayList<>();
 
     public Student(Long id, Group group, String firstName, String lastName) {

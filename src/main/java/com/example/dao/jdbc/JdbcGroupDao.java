@@ -1,8 +1,8 @@
 package com.example.dao.jdbc;
 
 import com.example.dao.GroupDao;
+import com.example.dao.mapper.GroupRowMapper;
 import com.example.entity.Group;
-import com.example.mapper.GroupRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,8 +21,17 @@ public class JdbcGroupDao implements GroupDao {
     private static final String DELETE_SQL = "DELETE FROM groups WHERE group_id = ?";
     private static final String FIND_ALL_SQL = "SELECT group_id, group_name FROM groups";
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + " WHERE group_id = ?";
+    private static final String FIND_BY_NAME_SQL = FIND_ALL_SQL + " WHERE group_name = ?";
+    private static final String COUNT_RECORDS_SQL = "SELECT count(*) FROM groups";
+    private static final String GET_BY_STUDENTS_COUNT_SQL =
+            "SELECT g.group_id, g.group_name " +
+                    "FROM groups g " +
+                    "LEFT JOIN students s " +
+                    "ON s.group_id = g.group_id " +
+                    "GROUP BY g.group_id " +
+                    "HAVING COUNT(*) <= ?";
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Group> groupRowMapper = new GroupRowMapper();
 
     @Autowired
@@ -37,9 +46,23 @@ public class JdbcGroupDao implements GroupDao {
     }
 
     @Override
+    public List<Group> findAllWithLessOrEqualStudents(Long studentsQuantity) {
+        return jdbcTemplate
+                .query(GET_BY_STUDENTS_COUNT_SQL, groupRowMapper, studentsQuantity);
+    }
+
+    @Override
     public Optional<Group> findById(Long id) {
         return jdbcTemplate
                 .query(FIND_BY_ID_SQL, groupRowMapper, id)
+                .stream()
+                .findFirst();
+    }
+
+    @Override
+    public Optional<Group> findByName(String name) {
+        return jdbcTemplate
+                .query(FIND_BY_NAME_SQL, groupRowMapper, name)
                 .stream()
                 .findFirst();
     }
@@ -68,12 +91,18 @@ public class JdbcGroupDao implements GroupDao {
                     return ps;
                 }, keyHolder);
         group.setId(keyHolder.getKeyAs(Long.class));
+        System.out.println("group from dao:" + group);
         return group;
     }
 
     @Override
-    public boolean deleteById(Long id) {
+    public void deleteById(Long id) {
+        jdbcTemplate.update(DELETE_SQL, id);
+    }
+
+    @Override
+    public Long count() {
         return jdbcTemplate
-                .update(DELETE_SQL, id) == 1;
+                .queryForObject(COUNT_RECORDS_SQL, Long.class);
     }
 }

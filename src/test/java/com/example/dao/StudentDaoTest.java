@@ -1,4 +1,4 @@
-package com.example;
+package com.example.dao;
 
 import com.example.entity.Course;
 import com.example.entity.Group;
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +31,7 @@ class StudentDaoTest extends BaseDaoTest {
                 .group(Group.ofId(100L))
                 .firstName("firstname")
                 .lastName("lastname")
-                .courses(Set.of(Course.ofId((100L))))
+                .courses(List.of(Course.ofId((100L))))
                 .build();
         Student savedStudent = studentDao.create(student);
         assertNotNull(savedStudent.getId());
@@ -57,12 +56,8 @@ class StudentDaoTest extends BaseDaoTest {
     @Test
     void shouldDeleteById() {
         assertTrue(studentDao.findById(101L).isPresent());
-        assertTrue(studentDao.deleteById(101L));
-    }
-
-    @Test
-    void shouldNotDeleteById() {
-        assertFalse(studentDao.deleteById(9999L));
+        studentDao.deleteById(101L);
+        assertTrue(studentDao.findById(101L).isEmpty());
     }
 
     @Test

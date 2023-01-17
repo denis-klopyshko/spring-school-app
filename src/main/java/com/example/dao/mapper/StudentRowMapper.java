@@ -1,4 +1,4 @@
-package com.example.mapper;
+package com.example.dao.mapper;
 
 import com.example.dao.CourseDao;
 import com.example.dao.GroupDao;

@@ -1,4 +1,4 @@
-package com.example;
+package com.example.dao;
 
 import com.example.entity.Group;
 import org.junit.jupiter.api.Test;
@@ -34,18 +34,14 @@ class GroupDaoTest extends BaseDaoTest {
     @Test
     void shouldDeleteById() {
         assertTrue(groupDao.findById(103L).isPresent());
-        assertTrue(groupDao.deleteById(103L));
+        groupDao.deleteById(103L);
+        assertTrue(courseDao.findById(103L).isEmpty());
     }
 
     @Test
     void shouldNotDeleteByIdThrowsException() {
         assertTrue(groupDao.findById(101L).isPresent());
         assertThrows(DataIntegrityViolationException.class, () -> groupDao.deleteById(101L));
-    }
-
-    @Test
-    void shouldNotDeleteById() {
-        assertFalse(groupDao.deleteById(9999L));
     }
 
     @Test

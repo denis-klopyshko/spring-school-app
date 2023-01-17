@@ -12,9 +12,13 @@ public interface CourseDao {
 
     Optional<Course> findById(Long id);
 
-    Course create(Course group);
+    Optional<Course> findByName(String name);
 
-    Course update(Course group);
+    Course create(Course course);
 
-    boolean deleteById(Long id);
+    Course update(Course course);
+
+    void deleteById(Long id);
+
+    Long count();
 }

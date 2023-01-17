@@ -43,10 +43,13 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseDto update(Long id, CourseDto courseDto) {
         log.info("Updating course: {}", courseDto);
-        var course = findCourseEntity(id);
+        var courseEntity = findCourseEntity(id);
+        if (!courseEntity.getName().equals(courseDto.getName())) {
+            validateNameIsUnique(courseDto.getName());
+        }
 
-        MAPPER.updateCourseFromDto(courseDto, course);
-        return MAPPER.mapToDto(courseDao.update(course));
+        MAPPER.updateCourseFromDto(courseDto, courseEntity);
+        return MAPPER.mapToDto(courseDao.update(courseEntity));
     }
 
     @Override

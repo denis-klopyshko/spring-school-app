@@ -8,6 +8,7 @@ import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
 import com.example.entity.Course;
 import com.example.entity.Student;
+import com.example.exception.ConflictException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.mapping.StudentMapper;
 import com.example.service.StudentService;
@@ -110,6 +111,16 @@ public class StudentServiceImpl implements StudentService {
     private void assignStudentOnCourse(Student student, CourseDto courseDto) {
         log.info("Assigning student with ID [{}] on course: {}", student.getId(), courseDto);
         Course course = courseDao.findById(courseDto.getId()).orElseThrow();
+
+        var studentCourses = courseDao.findAllByStudentId(student.getId());
+        boolean alreadyAssigned = studentCourses.stream().anyMatch(c -> c.getId().equals(courseDto.getId()));
+        if (alreadyAssigned) {
+            log.error("Student with ID:[{}] already assigned on course with ID:[{}]", student.getId(), courseDto);
+            throw new ConflictException(
+                    format("Student with ID:[%s] already assigned on course with ID: [%s]", student.getId(), courseDto.getId())
+            );
+        }
+
         studentDao.assignStudentOnCourse(student.getId(), course.getId());
         student.getCourses().add(course);
     }

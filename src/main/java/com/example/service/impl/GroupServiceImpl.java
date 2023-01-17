@@ -2,7 +2,6 @@ package com.example.service.impl;
 
 import com.example.dao.GroupDao;
 import com.example.dto.GroupDto;
-import com.example.dto.StudentDto;
 import com.example.entity.Group;
 import com.example.exception.ConflictException;
 import com.example.exception.RelationRemovalException;
@@ -58,9 +57,13 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupDto update(Long id, GroupDto groupDto) {
         log.info("Updating group: {}", groupDto);
-        Group existingGroup = findGroupEntity(id);
-        MAPPER.updateGroupFromDto(groupDto, existingGroup);
-        return MAPPER.mapToDto(groupDao.update(existingGroup));
+        Group groupEntity = findGroupEntity(id);
+        if (!groupEntity.getName().equals(groupDto.getName())) {
+            validateNameIsUnique(groupDto.getName());
+        }
+
+        MAPPER.updateGroupFromDto(groupDto, groupEntity);
+        return MAPPER.mapToDto(groupDao.update(groupEntity));
     }
 
     @Override
@@ -92,7 +95,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     private void validateNoAssignedStudents(Long groupId) {
-        List<StudentDto> assignedStudents = studentService.findAllByGroupId(groupId);
+        var assignedStudents = studentService.findAllByGroupId(groupId);
         if (!assignedStudents.isEmpty()) {
             throw new RelationRemovalException(
                     String.format("Can't delete group with assigned students! Students: %s", assignedStudents)

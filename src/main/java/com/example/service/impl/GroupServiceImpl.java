@@ -49,8 +49,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupDto create(GroupDto groupDto) {
         log.info("Creating new group: {}", groupDto);
         validateNameIsUnique(groupDto.getName());
-        Group group = MAPPER.mapToEntity(groupDto);
-        Group savedGroup = groupDao.create(group);
+        Group savedGroup = groupDao.create(MAPPER.mapToEntity(groupDto));
         return MAPPER.mapToDto(savedGroup);
     }
 

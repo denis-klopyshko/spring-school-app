@@ -18,7 +18,7 @@ public interface CourseDao {
 
     Course update(Course course);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 
     Long count();
 }

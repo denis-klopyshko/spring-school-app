@@ -91,13 +91,12 @@ public class JdbcGroupDao implements GroupDao {
                     return ps;
                 }, keyHolder);
         group.setId(keyHolder.getKeyAs(Long.class));
-        System.out.println("group from dao:" + group);
         return group;
     }
 
     @Override
-    public void deleteById(Long id) {
-        jdbcTemplate.update(DELETE_SQL, id);
+    public boolean deleteById(Long id) {
+        return jdbcTemplate.update(DELETE_SQL, id) == 1;
     }
 
     @Override

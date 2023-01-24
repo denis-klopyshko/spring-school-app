@@ -106,7 +106,7 @@ class GroupServiceImplTest {
         Group group = getGroupEntity();
         when(groupDao.findById(1L)).thenReturn(Optional.of(group));
         when(studentService.findAllByGroupId(1L)).thenReturn(emptyList());
-        doNothing().when(groupDao).deleteById(1L);
+        when(groupDao.deleteById(1L)).thenReturn(true);
 
         groupService.delete(1L);
 

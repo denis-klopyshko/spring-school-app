@@ -18,7 +18,7 @@ public interface GroupDao {
 
     Group update(Group group);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 
     Long count();
 }

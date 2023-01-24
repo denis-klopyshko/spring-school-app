@@ -96,7 +96,7 @@ class CourseServiceImplTest {
     void shouldDeleteCourse() {
         Course course = getCourseEntity();
         when(courseDao.findById(1L)).thenReturn(Optional.of(course));
-        doNothing().when(courseDao).deleteById(1L);
+        when(courseDao.deleteById(1L)).thenReturn(true);
 
         courseService.delete(1L);
 

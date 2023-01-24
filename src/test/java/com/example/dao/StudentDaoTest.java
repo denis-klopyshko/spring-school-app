@@ -61,6 +61,11 @@ class StudentDaoTest extends BaseDaoTest {
     }
 
     @Test
+    void shouldNotDeleteByNonExistingId() {
+        assertFalse(studentDao.deleteById(9999L));
+    }
+
+    @Test
     void shouldUpdate() {
         Student expectedBeforeUpdate = new Student(101L, Group.ofId(101L), "John", "Snow");
         assertEquals(expectedBeforeUpdate, studentDao.findById(101L).get());

@@ -7,13 +7,12 @@ import com.github.javafaker.Faker;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @UtilityClass
 public class TestDataGenerator {
-    private static final Faker faker = new Faker();
+    private static final Faker FAKER = new Faker();
     private static final int STUDENTS_QUANTITY = 200;
     private static final int GROUPS_QUANTITY = 10;
     private static final int COURSES_QUANTITY = 10;
@@ -24,23 +23,22 @@ public class TestDataGenerator {
                 .collect(Collectors.toList());
     }
 
-    public static Set<CourseDto> buildCourses() {
+    public static List<CourseDto> buildCourses() {
         return IntStream.rangeClosed(1, COURSES_QUANTITY)
                 .mapToObj(i -> CourseDto.builder()
-                        .name(faker.educator()
-                                .course())
-                        .description("Description")
+                        .name("Course" + i)
+                        .description("Description" + i)
                         .build()
                 )
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public static List<StudentDto> buildStudents() {
         return IntStream.rangeClosed(1, STUDENTS_QUANTITY)
                 .mapToObj(i -> StudentDto
                         .builder()
-                        .firstName(faker.name().firstName())
-                        .lastName(faker.name().lastName())
+                        .firstName(FAKER.name().firstName())
+                        .lastName(FAKER.name().lastName())
                         .build()
                 )
                 .collect(Collectors.toList());

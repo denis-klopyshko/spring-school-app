@@ -39,6 +39,11 @@ class GroupDaoTest extends BaseDaoTest {
     }
 
     @Test
+    void shouldNotDeleteByNonExistingId() {
+        assertFalse(groupDao.deleteById(103L));
+    }
+
+    @Test
     void shouldNotDeleteByIdThrowsException() {
         assertTrue(groupDao.findById(101L).isPresent());
         assertThrows(DataIntegrityViolationException.class, () -> groupDao.deleteById(101L));

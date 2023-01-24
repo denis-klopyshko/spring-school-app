@@ -37,8 +37,8 @@ class CourseDaoTest extends BaseDaoTest {
     }
 
     @Test
-    void shouldNotDeleteById() {
-        courseDao.deleteById(9999L);
+    void shouldNotDeleteByNonExistingId() {
+        assertFalse(courseDao.deleteById(9999L));
     }
 
     @Test

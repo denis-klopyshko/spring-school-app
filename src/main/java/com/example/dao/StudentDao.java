@@ -18,11 +18,9 @@ public interface StudentDao {
 
     Student update(Student student);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 
     boolean assignStudentOnCourse(Long studentId, Long courseId);
-
-    boolean removeStudentFromCourse(Long studentId, Long courseId);
 
     void removeStudentCourses(Long studentId);
 

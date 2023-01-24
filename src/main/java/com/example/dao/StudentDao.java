@@ -8,11 +8,21 @@ import java.util.Optional;
 public interface StudentDao {
     List<Student> findAll();
 
+    List<Student> findAllByGroupId(Long groupId);
+
     Optional<Student> findById(Long id);
 
-    Student create(Student group);
+    Optional<Student> findByFirstNameAndLastName(String firstName, String lastName);
 
-    Student update(Student group);
+    Student create(Student student);
+
+    Student update(Student student);
 
     boolean deleteById(Long id);
+
+    boolean assignStudentOnCourse(Long studentId, Long courseId);
+
+    void removeStudentCourses(Long studentId);
+
+    Long count();
 }

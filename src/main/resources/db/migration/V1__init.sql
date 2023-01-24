@@ -26,5 +26,6 @@ CREATE TABLE students_courses
     student_id INT,
     course_id  INT,
     CONSTRAINT FK_students FOREIGN KEY (student_id) REFERENCES students (student_id) ON DELETE CASCADE,
-    CONSTRAINT FK_courses FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE
+    CONSTRAINT FK_courses FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE,
+    UNIQUE (student_id, course_id)
 );

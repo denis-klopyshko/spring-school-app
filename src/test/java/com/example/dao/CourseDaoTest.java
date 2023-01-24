@@ -1,4 +1,4 @@
-package com.example;
+package com.example.dao;
 
 import com.example.entity.Course;
 import org.junit.jupiter.api.Test;
@@ -32,11 +32,12 @@ class CourseDaoTest extends BaseDaoTest {
     @Test
     void shouldDeleteById() {
         assertTrue(courseDao.findById(101L).isPresent());
-        assertTrue(courseDao.deleteById(101L));
+        courseDao.deleteById(101L);
+        assertTrue(courseDao.findById(101L).isEmpty());
     }
 
     @Test
-    void shouldNotDeleteById() {
+    void shouldNotDeleteByNonExistingId() {
         assertFalse(courseDao.deleteById(9999L));
     }
 

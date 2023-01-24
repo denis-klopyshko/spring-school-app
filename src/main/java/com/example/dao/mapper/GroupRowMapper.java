@@ -1,4 +1,4 @@
-package com.example.mapper;
+package com.example.dao.mapper;
 
 import com.example.entity.Group;
 import org.springframework.jdbc.core.RowMapper;

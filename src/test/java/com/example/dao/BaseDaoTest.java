@@ -1,13 +1,9 @@
-package com.example;
+package com.example.dao;
 
-import com.example.dao.CourseDao;
-import com.example.dao.GroupDao;
-import com.example.dao.StudentDao;
 import com.example.dao.jdbc.JdbcCourseDao;
 import com.example.dao.jdbc.JdbcGroupDao;
 import com.example.dao.jdbc.JdbcStudentDao;
-import com.example.mapper.StudentRowMapper;
-import org.junit.jupiter.api.BeforeAll;
+import com.example.dao.mapper.StudentRowMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

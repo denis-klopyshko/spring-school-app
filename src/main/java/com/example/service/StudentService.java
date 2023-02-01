@@ -9,7 +9,9 @@ import java.util.List;
 public interface StudentService {
     List<StudentDto> findAll();
 
-    List<StudentDto> findAllByGroupId(Long groupId);
+    List<StudentDto> findAllByGroupId(@NotNull Long groupId);
+
+    List<StudentDto> findAllByCourseName(@NotNull String courseName);
 
     StudentDto create(@Valid @NotNull StudentDto studentDto);
 
@@ -18,4 +20,8 @@ public interface StudentService {
     StudentDto findOne(@NotNull Long id);
 
     void delete(@NotNull Long courseId);
+
+    void assignStudentOnCourse(@NotNull Long studentId, @NotNull Long courseId);
+
+    void removeStudentFromCourse(@NotNull Long studentId, @NotNull Long courseId);
 }

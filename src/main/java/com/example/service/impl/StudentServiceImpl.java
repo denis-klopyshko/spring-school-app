@@ -56,6 +56,15 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<StudentDto> findAllByCourseName(String courseName) {
+        return studentDao.findAllByCourseName(courseName)
+                .stream()
+                .map(MAPPER::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public StudentDto create(StudentDto studentDto) {
         log.info("Creating student: {}", studentDto);
         var studentEntity = MAPPER.mapBaseAttributes(studentDto);
@@ -108,6 +117,18 @@ public class StudentServiceImpl implements StudentService {
         studentDao.deleteById(studentId);
     }
 
+    @Override
+    public void assignStudentOnCourse(Long studentId, Long courseId) {
+        var studentEntity = findStudentEntity(studentId);
+        assignStudentOnCourse(studentEntity, CourseDto.ofId(courseId));
+    }
+
+    @Override
+    public void removeStudentFromCourse(Long studentId, Long courseId) {
+        var studentEntity = findStudentEntity(studentId);
+        removeStudentFromCourse(studentEntity, CourseDto.ofId(courseId));
+    }
+
     private void assignStudentOnCourse(Student student, CourseDto courseDto) {
         log.info("Assigning student with ID [{}] on course: {}", student.getId(), courseDto);
         Course course = courseDao.findById(courseDto.getId()).orElseThrow();
@@ -118,6 +139,23 @@ public class StudentServiceImpl implements StudentService {
             log.error("Student with ID:[{}] already assigned on course with ID:[{}]", student.getId(), courseDto);
             throw new ConflictException(
                     format("Student with ID:[%s] already assigned on course with ID: [%s]", student.getId(), courseDto.getId())
+            );
+        }
+
+        studentDao.assignStudentOnCourse(student.getId(), course.getId());
+        student.getCourses().add(course);
+    }
+
+    private void removeStudentFromCourse(Student student, CourseDto courseDto) {
+        log.info("Removing student with ID [{}] from course: {}", student.getId(), courseDto);
+        Course course = courseDao.findById(courseDto.getId()).orElseThrow();
+
+        var studentCourses = courseDao.findAllByStudentId(student.getId());
+        boolean alreadyAssigned = studentCourses.stream().anyMatch(c -> c.getId().equals(courseDto.getId()));
+        if (!alreadyAssigned) {
+            log.error("Student with ID:[{}] NOT assigned on course with ID:[{}]", student.getId(), courseDto);
+            throw new IllegalStateException(
+                    format("Student with ID:[%s] NOT assigned on course with ID: [%s]", student.getId(), courseDto.getId())
             );
         }
 

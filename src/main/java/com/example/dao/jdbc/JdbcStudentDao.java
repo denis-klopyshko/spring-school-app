@@ -21,7 +21,7 @@ import java.util.Optional;
 @Repository
 public class JdbcStudentDao implements StudentDao {
     private static final String FIND_ALL_SQL = "" +
-            "SELECT s.student_id, s.group_id, s.first_name, s.last_name, g.group_id, g.group_name " +
+            "SELECT s.student_id, s.group_id, s.first_name, s.last_name, g.group_name " +
             "FROM students s " +
             "LEFT JOIN groups g on s.group_id = g.group_id";
     private static final String INSERT_SQL = "INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?);";
@@ -34,6 +34,11 @@ public class JdbcStudentDao implements StudentDao {
     private static final String DELETE_STUDENT_COURSE_SQL = "DELETE FROM students_courses WHERE student_id = ? AND course_id = ?";
     private static final String DELETE_STUDENT_COURSES_SQL = "DELETE FROM students_courses WHERE student_id = ?";
     private static final String COUNT_RECORDS_SQL = "SELECT count(*) FROM students";
+    private static final String FIND_ALL_BY_COURSE_NAME_SQL = FIND_ALL_SQL +
+            " INNER JOIN students_courses sc on sc.student_id = s.student_id" +
+            " INNER JOIN courses c on sc.course_id = c.course_id" +
+            " WHERE c.course_name = ?";
+
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Student> studentRowMapper;
 
@@ -52,7 +57,13 @@ public class JdbcStudentDao implements StudentDao {
     @Override
     public List<Student> findAllByGroupId(Long groupId) {
         return jdbcTemplate
-                .query(FIND_ALL_BY_GROUP_ID_SQL, studentRowMapper);
+                .query(FIND_ALL_BY_GROUP_ID_SQL, studentRowMapper, groupId);
+    }
+
+    @Override
+    public List<Student> findAllByCourseName(String courseName) {
+        return jdbcTemplate
+                .query(FIND_ALL_BY_COURSE_NAME_SQL, studentRowMapper, courseName);
     }
 
     @Override

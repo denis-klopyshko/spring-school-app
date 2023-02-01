@@ -10,6 +10,8 @@ public interface StudentDao {
 
     List<Student> findAllByGroupId(Long groupId);
 
+    List<Student> findAllByCourseName(String courseName);
+
     Optional<Student> findById(Long id);
 
     Optional<Student> findByFirstNameAndLastName(String firstName, String lastName);

@@ -3,6 +3,7 @@ package com.example.config;
 import com.example.sheduled.PopulateTestDataOneTimeJob;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -16,6 +17,10 @@ import javax.sql.DataSource;
 
 @Configuration
 public class SchedulerConfig {
+
+    @Value("${spring.quartz.auto-startup}")
+    private boolean quartzAutoStartupEnable;
+
     @Bean
     public JobDetailFactoryBean populateTestDataOneTimeJobDetail() {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
@@ -38,12 +43,13 @@ public class SchedulerConfig {
     public SchedulerFactoryBean scheduler(Trigger trigger, JobDetail job, DataSource quartzDataSource) {
         SchedulerFactoryBean schedulerFactory = new SchedulerFactoryBean();
         schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
-
         schedulerFactory.setJobFactory(springBeanJobFactory());
-        schedulerFactory.setJobDetails(job);
-        schedulerFactory.setTriggers(trigger);
+        if (quartzAutoStartupEnable) {
+            schedulerFactory.setJobDetails(job);
+            schedulerFactory.setTriggers(trigger);
+        }
         schedulerFactory.setDataSource(quartzDataSource);
-        schedulerFactory.setAutoStartup(true);
+        schedulerFactory.setAutoStartup(quartzAutoStartupEnable);
         return schedulerFactory;
     }
 

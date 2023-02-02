@@ -131,7 +131,7 @@ public class StudentServiceImpl implements StudentService {
 
     private void assignStudentOnCourse(Student student, CourseDto courseDto) {
         log.info("Assigning student with ID [{}] on course: {}", student.getId(), courseDto);
-        Course course = courseDao.findById(courseDto.getId()).orElseThrow();
+        Course course = findCourseEntity(courseDto.getId());
 
         var studentCourses = courseDao.findAllByStudentId(student.getId());
         boolean alreadyAssigned = studentCourses.stream().anyMatch(c -> c.getId().equals(courseDto.getId()));
@@ -148,7 +148,7 @@ public class StudentServiceImpl implements StudentService {
 
     private void removeStudentFromCourse(Student student, CourseDto courseDto) {
         log.info("Removing student with ID [{}] from course: {}", student.getId(), courseDto);
-        Course course = courseDao.findById(courseDto.getId()).orElseThrow();
+        Course course = findCourseEntity(courseDto.getId());
 
         var studentCourses = courseDao.findAllByStudentId(student.getId());
         boolean alreadyAssigned = studentCourses.stream().anyMatch(c -> c.getId().equals(courseDto.getId()));
@@ -167,6 +167,13 @@ public class StudentServiceImpl implements StudentService {
         return studentDao.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(format("Student with id: %s not found!", id))
+                );
+    }
+
+    private Course findCourseEntity(Long id) {
+        return courseDao.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(format("Course with id: %s not found!", id))
                 );
     }
 }

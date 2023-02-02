@@ -13,6 +13,7 @@ import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.Table;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,8 @@ public class StudentCommands {
     private GroupService groupService;
 
     @ShellMethod(value = "Find Student by id.", key = "find-student")
-    public void findStudentById(Long id) {
+    public void findStudentById(Long id) throws IOException {
+        lineReader.getHistory().purge();
         StudentDto studentDto = studentService.findOne(id);
         Table studentsTable = TableUtil.buildStudentsTable(List.of(studentDto));
         consoleWriter.print(studentsTable.render(80));

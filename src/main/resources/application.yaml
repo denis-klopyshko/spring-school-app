@@ -18,3 +18,4 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: never
+    auto-startup: true

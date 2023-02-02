@@ -15,14 +15,19 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
+@ConditionalOnProperty(name = "spring.quartz.auto-startup")
 public class PopulateTestDataOneTimeJob implements Job {
 
     @Autowired
@@ -48,7 +53,8 @@ public class PopulateTestDataOneTimeJob implements Job {
             } catch (Exception e) {
                 log.error("Error executing PopulateTestDataOneTimeJob!", e);
             }
-
+        } else {
+            log.info("PopulateTestDataOneTimeJob was already executed!");
         }
     }
 

@@ -53,8 +53,6 @@ public class PopulateTestDataOneTimeJob implements Job {
             } catch (Exception e) {
                 log.error("Error executing PopulateTestDataOneTimeJob!", e);
             }
-        } else {
-            log.info("PopulateTestDataOneTimeJob was already executed!");
         }
     }
 

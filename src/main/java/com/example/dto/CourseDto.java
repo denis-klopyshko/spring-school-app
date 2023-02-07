@@ -22,4 +22,8 @@ public class CourseDto {
     @NotBlank
     @Size(max = 255)
     private String description;
+
+    public static CourseDto ofId(Long courseId) {
+        return CourseDto.builder().id(courseId).build();
+    }
 }

@@ -12,3 +12,10 @@ spring:
       - ${DB_SCHEMA_NAME:student_db}
     baseline-on-migrate: true
     baseline-version: 1
+  main:
+    banner-mode: off
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    auto-startup: true

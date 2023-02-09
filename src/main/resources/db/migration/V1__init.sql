@@ -12,7 +12,7 @@ CREATE TABLE groups
 CREATE TABLE students
 (
     student_id BIGSERIAL PRIMARY KEY,
-    group_id   INT,
+    group_id   BIGINT,
     first_name VARCHAR(255) NOT NULL,
     last_name  VARCHAR(255) NOT NULL,
     FOREIGN KEY (group_id) REFERENCES groups (group_id)
@@ -28,8 +28,8 @@ CREATE TABLE courses
 CREATE TABLE students_courses
 (
     id         BIGSERIAL PRIMARY KEY,
-    student_id INT,
-    course_id  INT,
+    student_id BIGINT,
+    course_id  BIGINT,
     CONSTRAINT FK_students FOREIGN KEY (student_id) REFERENCES students (student_id) ON DELETE CASCADE,
     CONSTRAINT FK_courses FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE,
     UNIQUE (student_id, course_id)

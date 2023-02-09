@@ -31,7 +31,6 @@ public class JdbcStudentDao implements StudentDao {
     private static final String FIND_ALL_BY_GROUP_ID_SQL = FIND_ALL_SQL + " WHERE g.group_id = ?";
     private static final String FIND_BY_FIRSTNAME_AND_LASTNAME_SQL = FIND_ALL_SQL + " WHERE s.first_name = ? AND s.last_name = ?";
     private static final String INSERT_STUDENT_COURSE_SQL = "INSERT INTO students_courses (student_id, course_id) VALUES ( ?, ? )";
-    private static final String DELETE_STUDENT_COURSE_SQL = "DELETE FROM students_courses WHERE student_id = ? AND course_id = ?";
     private static final String DELETE_STUDENT_COURSES_SQL = "DELETE FROM students_courses WHERE student_id = ?";
     private static final String COUNT_RECORDS_SQL = "SELECT count(*) FROM students";
     private static final String FIND_ALL_BY_COURSE_NAME_SQL = FIND_ALL_SQL +
@@ -124,8 +123,8 @@ public class JdbcStudentDao implements StudentDao {
     }
 
     @Override
-    public boolean deleteById(Long id) {
-        return jdbcTemplate.update(DELETE_STUDENT_SQL, id) == 1;
+    public void deleteById(Long id) {
+        jdbcTemplate.update(DELETE_STUDENT_SQL, id);
     }
 
     @Override

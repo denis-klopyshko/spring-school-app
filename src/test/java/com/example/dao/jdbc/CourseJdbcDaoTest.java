@@ -1,4 +1,4 @@
-package com.example.dao;
+package com.example.dao.jdbc;
 
 import com.example.entity.Course;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CourseDaoTest extends BaseDaoTest {
+class CourseJdbcDaoTest extends BaseJdbcDaoTest {
     @Test
     void shouldSaveNewCourse() {
         Course savedCourse = courseDao.create(new Course("math", "description"));
@@ -34,11 +34,6 @@ class CourseDaoTest extends BaseDaoTest {
         assertTrue(courseDao.findById(101L).isPresent());
         courseDao.deleteById(101L);
         assertTrue(courseDao.findById(101L).isEmpty());
-    }
-
-    @Test
-    void shouldNotDeleteByNonExistingId() {
-        assertFalse(courseDao.deleteById(9999L));
     }
 
     @Test

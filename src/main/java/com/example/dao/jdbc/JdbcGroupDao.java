@@ -95,8 +95,8 @@ public class JdbcGroupDao implements GroupDao {
     }
 
     @Override
-    public boolean deleteById(Long id) {
-        return jdbcTemplate.update(DELETE_SQL, id) == 1;
+    public void deleteById(Long id) {
+        jdbcTemplate.update(DELETE_SQL, id);
     }
 
     @Override

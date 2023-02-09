@@ -1,7 +1,7 @@
 package com.example.dao.mapper;
 
-import com.example.dao.CourseDao;
-import com.example.dao.GroupDao;
+import com.example.dao.jdbc.JdbcCourseDao;
+import com.example.dao.jdbc.JdbcGroupDao;
 import com.example.entity.Course;
 import com.example.entity.Group;
 import com.example.entity.Student;
@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class StudentRowMapper implements RowMapper<Student> {
-    private final GroupDao groupDao;
-    private final CourseDao courseDao;
+    private final JdbcGroupDao groupDao;
+    private final JdbcCourseDao courseDao;
 
     @Override
     public Student mapRow(ResultSet rs, int rowNum) throws SQLException {

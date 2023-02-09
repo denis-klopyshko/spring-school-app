@@ -3,6 +3,9 @@ package com.example.service;
 import com.example.dao.CourseDao;
 import com.example.dao.GroupDao;
 import com.example.dao.StudentDao;
+import com.example.dao.jdbc.JdbcCourseDao;
+import com.example.dao.jdbc.JdbcGroupDao;
+import com.example.dao.jdbc.JdbcStudentDao;
 import com.example.dto.CourseDto;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
@@ -16,6 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,18 +32,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {StudentServiceImpl.class})
 class StudentServiceImplTest {
-    @Mock
-    CourseDao courseDao;
+    @MockBean
+    JdbcCourseDao courseDao;
 
-    @Mock
-    GroupDao groupDao;
+    @MockBean
+    JdbcGroupDao groupDao;
 
-    @Mock
-    StudentDao studentDao;
+    @MockBean
+    JdbcStudentDao studentDao;
 
-    @InjectMocks
+    @Autowired
     StudentServiceImpl studentService;
 
     @Test

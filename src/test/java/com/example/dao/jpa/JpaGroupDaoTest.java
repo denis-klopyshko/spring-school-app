@@ -1,7 +1,8 @@
-package com.example.dao;
+package com.example.dao.jpa;
 
 import com.example.entity.Group;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
@@ -9,54 +10,53 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class GroupDaoTest extends BaseDaoTest {
+class JpaGroupDaoTest extends BaseJpaDaoTest {
+    @Autowired
+    private JpaGroupDao jpaGroupDao;
+
     @Test
     void shouldSaveNewGroup() {
-        Group savedGroup = groupDao.create(new Group(1L, "GR-01"));
+        Group savedGroup = jpaGroupDao.create(new Group(1L, "GR-01"));
         assertNotNull(savedGroup.getId());
     }
 
     @Test
     void shouldFindGroupById() {
         Group expected = new Group(100L, "GR-10");
-        Optional<Group> actual = groupDao.findById(100L);
+        Optional<Group> actual = jpaGroupDao.findById(100L);
         assertTrue(actual.isPresent());
         assertEquals(expected, actual.get());
     }
 
     @Test
     void shouldNotFindById() {
-        Optional<Group> groupFromDb = groupDao.findById(999L);
+        Optional<Group> groupFromDb = jpaGroupDao.findById(999L);
         assertFalse(groupFromDb.isPresent());
     }
 
     @Test
     void shouldDeleteById() {
-        assertTrue(groupDao.findById(103L).isPresent());
-        groupDao.deleteById(103L);
-        assertTrue(courseDao.findById(103L).isEmpty());
-    }
-
-    @Test
-    void shouldNotDeleteByNonExistingId() {
-        assertFalse(groupDao.deleteById(103L));
+        assertTrue(jpaGroupDao.findById(103L).isPresent());
+        jpaGroupDao.deleteById(103L);
+        assertTrue(jpaGroupDao.findById(103L).isEmpty());
     }
 
     @Test
     void shouldNotDeleteByIdThrowsException() {
-        assertTrue(groupDao.findById(101L).isPresent());
-        assertThrows(DataIntegrityViolationException.class, () -> groupDao.deleteById(101L));
+        assertTrue(jpaGroupDao.findById(101L).isPresent());
+        assertThrows(DataIntegrityViolationException.class, () -> jpaGroupDao.deleteById(101L));
     }
 
     @Test
     void shouldUpdate() {
         Group expectedBeforeUpdate = new Group(101L, "GR-11");
-        assertEquals(expectedBeforeUpdate, groupDao.findById(101L).get());
+        assertEquals(expectedBeforeUpdate, jpaGroupDao.findById(101L).get());
 
         Group expectedAfterUpdate = new Group(101L, "GR-14");
-        groupDao.update(expectedAfterUpdate);
-        assertEquals(expectedAfterUpdate, groupDao.findById(101L).get());
+        jpaGroupDao.update(expectedAfterUpdate);
+        assertEquals(expectedAfterUpdate, jpaGroupDao.findById(101L).get());
     }
 
     @Test
@@ -67,7 +67,7 @@ class GroupDaoTest extends BaseDaoTest {
                 new Group(102L, "GR-12"),
                 new Group(103L, "GR-13")
         );
-        List<Group> actual = groupDao.findAll();
+        List<Group> actual = jpaGroupDao.findAll();
         assertEquals(expected, actual);
     }
 }

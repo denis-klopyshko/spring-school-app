@@ -40,7 +40,7 @@ class StudentJdbcDaoTest extends BaseJdbcDaoTest {
     }
 
     @Test
-    void shouldFindStudentById() {
+    void shouldFindById() {
         Student expected = new Student(100L, Group.ofId(100L), "John", "Snow");
         Optional<Student> actual = studentDao.findById(100L);
         assertTrue(actual.isPresent());
@@ -85,7 +85,8 @@ class StudentJdbcDaoTest extends BaseJdbcDaoTest {
         List<Student> expected = Arrays.asList(
                 new Student(100L, Group.builder().id(100L).name("GR-10").build(), "John", "Snow"),
                 new Student(101L, Group.builder().id(101L).name("GR-11").build(), "Bob", "Rogers"),
-                new Student(102L, Group.builder().id(102L).name("GR-12").build(), "Roger", "That")
+                new Student(102L, Group.builder().id(102L).name("GR-12").build(), "Roger", "That"),
+                new Student(103L, null, "Irvin", "Napkins")
         );
         List<Student> actual = studentDao.findAll();
         assertEquals(expected, actual);

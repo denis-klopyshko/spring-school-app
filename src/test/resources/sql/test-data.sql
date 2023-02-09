@@ -12,4 +12,10 @@ VALUES (100, 'Math', 'Math Description'),
 INSERT INTO students (student_id, group_id, first_name, last_name)
 VALUES (100, 100, 'John', 'Snow'),
        (101, 101, 'Bob', 'Rogers'),
-       (102, 102, 'Roger', 'That');
+       (102, 102, 'Roger', 'That'),
+       (103, null, 'Irvin', 'Napkins');
+
+
+INSERT INTO students_courses (student_id, course_id)
+VALUES (100, 100),
+       (100, 101);

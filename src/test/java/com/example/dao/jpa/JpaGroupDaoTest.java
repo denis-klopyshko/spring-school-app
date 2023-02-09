@@ -3,14 +3,12 @@ package com.example.dao.jpa;
 import com.example.entity.Group;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JpaGroupDaoTest extends BaseJpaDaoTest {
     @Autowired
@@ -18,7 +16,7 @@ class JpaGroupDaoTest extends BaseJpaDaoTest {
 
     @Test
     void shouldSaveNewGroup() {
-        Group savedGroup = jpaGroupDao.create(new Group(1L, "GR-01"));
+        Group savedGroup = jpaGroupDao.create(new Group("GR-01"));
         assertNotNull(savedGroup.getId());
     }
 
@@ -28,6 +26,19 @@ class JpaGroupDaoTest extends BaseJpaDaoTest {
         Optional<Group> actual = jpaGroupDao.findById(100L);
         assertTrue(actual.isPresent());
         assertEquals(expected, actual.get());
+    }
+
+    @Test
+    void shouldFindGroupByName() {
+        Optional<Group> actual = jpaGroupDao.findByName("GR-12");
+        assertTrue(actual.isPresent());
+        assertEquals("GR-12", actual.get().getName());
+    }
+
+    @Test
+    void shouldNotFindGroupByName() {
+        Optional<Group> actual = jpaGroupDao.findByName("GR-18");
+        assertFalse(actual.isPresent());
     }
 
     @Test
@@ -41,12 +52,6 @@ class JpaGroupDaoTest extends BaseJpaDaoTest {
         assertTrue(jpaGroupDao.findById(103L).isPresent());
         jpaGroupDao.deleteById(103L);
         assertTrue(jpaGroupDao.findById(103L).isEmpty());
-    }
-
-    @Test
-    void shouldNotDeleteByIdThrowsException() {
-        assertTrue(jpaGroupDao.findById(101L).isPresent());
-        assertThrows(DataIntegrityViolationException.class, () -> jpaGroupDao.deleteById(101L));
     }
 
     @Test
@@ -68,6 +73,15 @@ class JpaGroupDaoTest extends BaseJpaDaoTest {
                 new Group(103L, "GR-13")
         );
         List<Group> actual = jpaGroupDao.findAll();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindAllByStudentsLimit() {
+        List<Group> expected = List.of(
+                new Group(103L, "GR-13")
+        );
+        List<Group> actual = jpaGroupDao.findAllWithLessOrEqualStudents(0L);
         assertEquals(expected, actual);
     }
 }

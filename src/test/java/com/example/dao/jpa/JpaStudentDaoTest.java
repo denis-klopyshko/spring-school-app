@@ -53,6 +53,38 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
         assertEquals(expected, actual.get());
     }
 
+
+    @Test
+    void shouldFindByFirstNameAndLastName() {
+        Optional<Student> actual = jpaStudentDao.findByFirstNameAndLastName("John", "Snow");
+        assertTrue(actual.isPresent());
+        assertEquals("John Snow", actual.get().getFirstName() + " " + actual.get().getLastName());
+    }
+
+    @Test
+    void shouldNotFindByFirstNameAndLastName() {
+        Optional<Student> actual = jpaStudentDao.findByFirstNameAndLastName("John", "Napkins");
+        assertFalse(actual.isPresent());
+    }
+
+    @Test
+    void shouldFindStudentsByCourseName() {
+        List<Student> expected = List.of(
+                new Student(100L, Group.builder().id(100L).name("GR-10").build(), "John", "Snow")
+        );
+        List<Student> actual = jpaStudentDao.findAllByCourseName("Math");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindStudentsByGroupId() {
+        List<Student> expected = List.of(
+                new Student(101L, Group.builder().id(101L).name("GR-11").build(), "Bob", "Rogers")
+        );
+        List<Student> actual = jpaStudentDao.findAllByGroupId(101L);
+        assertEquals(expected, actual);
+    }
+
     @Test
     void shouldNotFindById() {
         Optional<Student> studentFromDb = jpaStudentDao.findById(999L);
@@ -91,7 +123,8 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
         List<Student> expected = Arrays.asList(
                 new Student(100L, Group.builder().id(100L).name("GR-10").build(), "John", "Snow"),
                 new Student(101L, Group.builder().id(101L).name("GR-11").build(), "Bob", "Rogers"),
-                new Student(102L, Group.builder().id(102L).name("GR-12").build(), "Roger", "That")
+                new Student(102L, Group.builder().id(102L).name("GR-12").build(), "Roger", "That"),
+                new Student(103L, null, "Irvin", "Napkins")
         );
         List<Student> actual = jpaStudentDao.findAll();
         assertEquals(expected, actual);

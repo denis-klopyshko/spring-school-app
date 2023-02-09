@@ -1,7 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dao.GroupDao;
-import com.example.dao.jdbc.JdbcGroupDao;
+import com.example.dao.jpa.JpaGroupDao;
 import com.example.dto.GroupDto;
 import com.example.entity.Group;
 import com.example.exception.ConflictException;
@@ -28,7 +27,7 @@ public class GroupServiceImpl implements GroupService {
     private StudentService studentService;
 
     @Autowired
-    private JdbcGroupDao groupDao;
+    private JpaGroupDao groupDao;
 
     @Override
     public List<GroupDto> findAll() {

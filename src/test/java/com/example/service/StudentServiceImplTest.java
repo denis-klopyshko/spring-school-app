@@ -1,11 +1,8 @@
 package com.example.service;
 
-import com.example.dao.CourseDao;
-import com.example.dao.GroupDao;
-import com.example.dao.StudentDao;
-import com.example.dao.jdbc.JdbcCourseDao;
-import com.example.dao.jdbc.JdbcGroupDao;
-import com.example.dao.jdbc.JdbcStudentDao;
+import com.example.dao.jpa.JpaCourseDao;
+import com.example.dao.jpa.JpaGroupDao;
+import com.example.dao.jpa.JpaStudentDao;
 import com.example.dto.CourseDto;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
@@ -15,10 +12,6 @@ import com.example.entity.Student;
 import com.example.exception.ResourceNotFoundException;
 import com.example.service.impl.StudentServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,13 +28,13 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {StudentServiceImpl.class})
 class StudentServiceImplTest {
     @MockBean
-    JdbcCourseDao courseDao;
+    JpaCourseDao courseDao;
 
     @MockBean
-    JdbcGroupDao groupDao;
+    JpaGroupDao groupDao;
 
     @MockBean
-    JdbcStudentDao studentDao;
+    JpaStudentDao studentDao;
 
     @Autowired
     StudentServiceImpl studentService;

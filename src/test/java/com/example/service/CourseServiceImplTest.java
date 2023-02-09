@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dao.jdbc.JdbcCourseDao;
+import com.example.dao.jpa.JpaCourseDao;
 import com.example.dto.CourseDto;
 import com.example.entity.Course;
 import com.example.exception.ConflictException;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {CourseServiceImpl.class})
 class CourseServiceImplTest {
     @MockBean
-    JdbcCourseDao courseDao;
+    JpaCourseDao courseDao;
 
     @Autowired
     CourseServiceImpl courseService;
@@ -95,7 +95,7 @@ class CourseServiceImplTest {
     void shouldDeleteCourse() {
         Course course = getCourseEntity();
         when(courseDao.findById(1L)).thenReturn(Optional.of(course));
-       // when(courseDao.deleteById(1L)).thenReturn(true);
+        // when(courseDao.deleteById(1L)).thenReturn(true);
 
         courseService.delete(1L);
 

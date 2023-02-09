@@ -5,6 +5,7 @@ import com.example.entity.Group;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
@@ -46,10 +47,16 @@ public class JpaGroupDao implements GroupDao {
 
     @Override
     public Optional<Group> findByName(String name) {
-        Group group = em.createQuery(FIND_BY_NAME, Group.class)
-                .setParameter("name", name)
-                .getSingleResult();
-        return Optional.ofNullable(group);
+        Group group;
+        try {
+            group = em.createQuery(FIND_BY_NAME, Group.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+
+        return Optional.of(group);
     }
 
     @Override

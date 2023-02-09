@@ -2,14 +2,12 @@ package com.example.dao.jpa;
 
 import com.example.dao.StudentDao;
 import com.example.entity.Course;
+import com.example.entity.Group;
 import com.example.entity.Student;
 import com.example.entity.Student_;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -35,9 +33,9 @@ public class JpaStudentDao implements StudentDao {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Student> criteriaQuery = criteriaBuilder.createQuery(Student.class);
         Root<Student> studentRoot = criteriaQuery.from(Student.class);
-        Join<Student, Course> coursesJoin = studentRoot.join("groups");
+        Join<Student, Group> groupJoin = studentRoot.join("group");
         criteriaQuery.select(studentRoot)
-                .where(criteriaBuilder.equal(coursesJoin.get("group_id"), groupId));
+                .where(criteriaBuilder.equal(groupJoin.get("id"), groupId));
         TypedQuery<Student> query = em.createQuery(criteriaQuery);
 
         return query.getResultList();
@@ -70,9 +68,16 @@ public class JpaStudentDao implements StudentDao {
                 cb.equal(studentRoot.get(Student_.firstName), firstName),
                 cb.equal(studentRoot.get(Student_.lastName), lastName)
         ));
-
         TypedQuery<Student> query = em.createQuery(q);
-        return Optional.ofNullable(query.getSingleResult());
+
+        Student student = null;
+        try {
+            student = query.getSingleResult();
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+
+        return Optional.of(student);
     }
 
     @Override

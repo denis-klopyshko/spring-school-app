@@ -43,6 +43,17 @@ class JpaCourseDaoTest extends BaseJpaDaoTest {
     }
 
     @Test
+    void shouldFindByName() {
+        Optional<Course> course = jpaCourseDao.findByName("Math");
+        assertTrue(course.isPresent());
+    }
+
+    @Test
+    void shouldReturnTotalNumberOfEntities() {
+        assertEquals(3, jpaCourseDao.count());
+    }
+
+    @Test
     void shouldUpdate() {
         Course expectedBeforeUpdate = new Course(101L, "Biology", "Biology Description");
         assertEquals(expectedBeforeUpdate, jpaCourseDao.findById(101L).get());
@@ -61,6 +72,16 @@ class JpaCourseDaoTest extends BaseJpaDaoTest {
         );
         List<Course> actual = jpaCourseDao.findAll();
 
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindAllByStudentId() {
+        List<Course> expected = List.of(
+                new Course(100L, "Math", "Math Description"),
+                new Course(101L, "Biology", "Biology Description")
+        );
+        List<Course> actual = jpaCourseDao.findAllByStudentId(100L);
         assertEquals(expected, actual);
     }
 }

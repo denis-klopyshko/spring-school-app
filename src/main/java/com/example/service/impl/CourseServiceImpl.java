@@ -1,7 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dao.CourseDao;
-import com.example.dao.jdbc.JdbcCourseDao;
+import com.example.dao.jpa.JpaCourseDao;
 import com.example.dto.CourseDto;
 import com.example.entity.Course;
 import com.example.exception.ConflictException;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
     private static final CourseMapper MAPPER = CourseMapper.INSTANCE;
-    private final JdbcCourseDao courseDao;
+    private final JpaCourseDao courseDao;
 
     @Override
     public List<CourseDto> findAll() {

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,6 +23,12 @@ public class JpaCourseDao implements CourseDao {
     private static final String FIND_ALL_SQL = "select c from Course c";
     private static final String COUNT_QUERY = "select count(c) from Course c";
 
+    private static final String FIND_COURSES_BY_STUDENT_ID_SQL = "" +
+            "SELECT c.course_id, c.course_name, c.course_description " +
+            "FROM courses c " +
+            "INNER JOIN students_courses sc ON c.course_id = sc.course_id " +
+            "WHERE sc.student_id = :studentId";
+
     @PersistenceContext
     private EntityManager em;
 
@@ -33,13 +40,8 @@ public class JpaCourseDao implements CourseDao {
 
     @Override
     public List<Course> findAllByStudentId(Long studentId) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Course> criteriaQuery = criteriaBuilder.createQuery(Course.class);
-        Root<Course> root = criteriaQuery.from(Course.class);
-        Join<Course, Student> studentsJoin = root.join("students");
-        criteriaQuery.select(root)
-                .where(criteriaBuilder.equal(studentsJoin.get("id"), studentId));
-        TypedQuery<Course> query = em.createQuery(criteriaQuery);
+        Query query = em.createNativeQuery(FIND_COURSES_BY_STUDENT_ID_SQL, Course.class);
+        query.setParameter("studentId", studentId);
         return query.getResultList();
     }
 

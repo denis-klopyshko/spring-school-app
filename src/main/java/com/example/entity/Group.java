@@ -1,10 +1,10 @@
 package com.example.entity;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,8 +25,18 @@ public class Group {
     @Column(name = "group_name")
     private String name;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
+    @Builder.Default
+    @ToString.Exclude
+    List<Student> students = new ArrayList<>();
+
     public Group(String name) {
         this.name = name;
+    }
+
+    public Group(Long id, String name) {
+        this.name = name;
+        this.id = id;
     }
 
     public static Group ofId(Long id) {

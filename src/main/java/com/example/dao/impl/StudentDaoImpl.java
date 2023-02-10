@@ -1,4 +1,4 @@
-package com.example.dao.jpa;
+package com.example.dao.impl;
 
 import com.example.dao.StudentDao;
 import com.example.entity.Course;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaStudentDao implements StudentDao {
+public class StudentDaoImpl implements StudentDao {
     private static final String FIND_ALL_SQL = "select s from Student s";
     private static final String COUNT_QUERY = "select count(g) from Group g";
     @PersistenceContext

@@ -60,9 +60,11 @@ public class Student {
 
     public void addCourse(Course course) {
         this.courses.add(course);
+        course.getStudents().add(this);
     }
 
     public void removeCourse(Course course) {
         this.courses.remove(course);
+        course.getStudents().remove(this);
     }
 }

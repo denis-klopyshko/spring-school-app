@@ -1,4 +1,4 @@
-package com.example.dao.jpa;
+package com.example.dao.impl;
 
 import com.example.dao.GroupDao;
 import com.example.entity.Group;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaGroupDao implements GroupDao {
+public class GroupDaoImpl implements GroupDao {
     public static final String FIND_BY_NAME = "select g from Group g where g.name = :name";
     private static final String FIND_ALL_SQL = "select g from Group g";
     private static final String COUNT_QUERY = "select count(g) from Group g";

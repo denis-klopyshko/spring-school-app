@@ -1,8 +1,8 @@
 package com.example.service;
 
-import com.example.dao.jpa.JpaCourseDao;
-import com.example.dao.jpa.JpaGroupDao;
-import com.example.dao.jpa.JpaStudentDao;
+import com.example.dao.impl.CourseDaoImpl;
+import com.example.dao.impl.GroupDaoImpl;
+import com.example.dao.impl.StudentDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {StudentServiceImpl.class})
 class StudentServiceImplTest {
     @MockBean
-    JpaCourseDao courseDao;
+    CourseDaoImpl courseDao;
 
     @MockBean
-    JpaGroupDao groupDao;
+    GroupDaoImpl groupDao;
 
     @MockBean
-    JpaStudentDao studentDao;
+    StudentDaoImpl studentDao;
 
     @Autowired
     StudentServiceImpl studentService;

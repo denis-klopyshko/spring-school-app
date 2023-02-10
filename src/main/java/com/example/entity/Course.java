@@ -4,6 +4,8 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -28,7 +30,18 @@ public class Course {
     @Column(name = "course_description")
     private String description;
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "courses")
+    @Builder.Default
+    @ToString.Exclude
+    private List<Student> students = new ArrayList<>();
+
     public Course(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public Course(Long id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
     }

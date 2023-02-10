@@ -1,5 +1,6 @@
-package com.example.dao.jpa;
+package com.example.dao;
 
+import com.example.dao.impl.StudentDaoImpl;
 import com.example.entity.Course;
 import com.example.entity.Group;
 import com.example.entity.Student;
@@ -13,20 +14,20 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class JpaStudentDaoTest extends BaseJpaDaoTest {
+class StudentDaoImplTest extends BaseJpaDaoTest {
     
     @Autowired
-    private JpaStudentDao jpaStudentDao;
+    private StudentDaoImpl studentDao;
     
     @Test
     void shouldSaveNewStudentWithoutGroup() {
-        Student savedStudent = jpaStudentDao.create(new Student("John", "Snow"));
+        Student savedStudent = studentDao.create(new Student("John", "Snow"));
         assertNotNull(savedStudent.getId());
     }
 
     @Test
     void shouldSaveNewStudentWithGroup() {
-        Student savedStudent = jpaStudentDao.create(new Student(Group.ofId(100L), "firstname", "lastname"));
+        Student savedStudent = studentDao.create(new Student(Group.ofId(100L), "firstname", "lastname"));
         assertNotNull(savedStudent.getId());
         assertNotNull(savedStudent.getGroup());
     }
@@ -39,7 +40,7 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
                 .lastName("lastname")
                 .courses(List.of(Course.ofId((100L))))
                 .build();
-        Student savedStudent = jpaStudentDao.create(student);
+        Student savedStudent = studentDao.create(student);
         assertNotNull(savedStudent.getId());
         assertNotNull(savedStudent.getGroup());
         assertFalse(savedStudent.getCourses().isEmpty());
@@ -48,7 +49,7 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
     @Test
     void shouldFindStudentById() {
         Student expected = new Student(100L, Group.ofId(100L), "John", "Snow");
-        Optional<Student> actual = jpaStudentDao.findById(100L);
+        Optional<Student> actual = studentDao.findById(100L);
         assertTrue(actual.isPresent());
         assertEquals(expected, actual.get());
     }
@@ -56,14 +57,14 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
 
     @Test
     void shouldFindByFirstNameAndLastName() {
-        Optional<Student> actual = jpaStudentDao.findByFirstNameAndLastName("John", "Snow");
+        Optional<Student> actual = studentDao.findByFirstNameAndLastName("John", "Snow");
         assertTrue(actual.isPresent());
         assertEquals("John Snow", actual.get().getFirstName() + " " + actual.get().getLastName());
     }
 
     @Test
     void shouldNotFindByFirstNameAndLastName() {
-        Optional<Student> actual = jpaStudentDao.findByFirstNameAndLastName("John", "Napkins");
+        Optional<Student> actual = studentDao.findByFirstNameAndLastName("John", "Napkins");
         assertFalse(actual.isPresent());
     }
 
@@ -72,7 +73,7 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
         List<Student> expected = List.of(
                 new Student(100L, Group.builder().id(100L).name("GR-10").build(), "John", "Snow")
         );
-        List<Student> actual = jpaStudentDao.findAllByCourseName("Math");
+        List<Student> actual = studentDao.findAllByCourseName("Math");
         assertEquals(expected, actual);
     }
 
@@ -81,41 +82,41 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
         List<Student> expected = List.of(
                 new Student(101L, Group.builder().id(101L).name("GR-11").build(), "Bob", "Rogers")
         );
-        List<Student> actual = jpaStudentDao.findAllByGroupId(101L);
+        List<Student> actual = studentDao.findAllByGroupId(101L);
         assertEquals(expected, actual);
     }
 
     @Test
     void shouldNotFindById() {
-        Optional<Student> studentFromDb = jpaStudentDao.findById(999L);
+        Optional<Student> studentFromDb = studentDao.findById(999L);
         assertFalse(studentFromDb.isPresent());
     }
 
     @Test
     void shouldDeleteById() {
-        assertTrue(jpaStudentDao.findById(101L).isPresent());
-        jpaStudentDao.deleteById(101L);
-        assertTrue(jpaStudentDao.findById(101L).isEmpty());
+        assertTrue(studentDao.findById(101L).isPresent());
+        studentDao.deleteById(101L);
+        assertTrue(studentDao.findById(101L).isEmpty());
     }
 
     @Test
     void shouldUpdate() {
         Student expectedBeforeUpdate = new Student(101L, Group.ofId(101L), "John", "Snow");
-        assertEquals(expectedBeforeUpdate, jpaStudentDao.findById(101L).get());
+        assertEquals(expectedBeforeUpdate, studentDao.findById(101L).get());
 
         Student expectedAfterUpdate = new Student(101L, Group.ofId(101L), "Irvin", "Hopkins");
-        jpaStudentDao.update(expectedAfterUpdate);
-        assertEquals(expectedAfterUpdate, jpaStudentDao.findById(101L).get());
+        studentDao.update(expectedAfterUpdate);
+        assertEquals(expectedAfterUpdate, studentDao.findById(101L).get());
     }
 
     @Test
     void shouldUpdateStudentGroup() {
         Student expectedBeforeUpdate = new Student(101L, Group.ofId(101L), "John", "Snow");
-        assertEquals(expectedBeforeUpdate, jpaStudentDao.findById(101L).get());
+        assertEquals(expectedBeforeUpdate, studentDao.findById(101L).get());
 
         Student expectedAfterUpdate = new Student(101L, Group.ofId(102L), "John", "Snow");
-        jpaStudentDao.update(expectedAfterUpdate);
-        assertEquals(expectedAfterUpdate, jpaStudentDao.findById(101L).get());
+        studentDao.update(expectedAfterUpdate);
+        assertEquals(expectedAfterUpdate, studentDao.findById(101L).get());
     }
 
     @Test
@@ -126,7 +127,7 @@ class JpaStudentDaoTest extends BaseJpaDaoTest {
                 new Student(102L, Group.builder().id(102L).name("GR-12").build(), "Roger", "That"),
                 new Student(103L, null, "Irvin", "Napkins")
         );
-        List<Student> actual = jpaStudentDao.findAll();
+        List<Student> actual = studentDao.findAll();
         assertEquals(expected, actual);
     }
 }

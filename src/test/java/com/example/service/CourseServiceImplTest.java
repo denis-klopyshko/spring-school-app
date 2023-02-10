@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dao.jpa.JpaCourseDao;
+import com.example.dao.impl.CourseDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.entity.Course;
 import com.example.exception.ConflictException;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {CourseServiceImpl.class})
 class CourseServiceImplTest {
     @MockBean
-    JpaCourseDao courseDao;
+    CourseDaoImpl courseDao;
 
     @Autowired
     CourseServiceImpl courseService;

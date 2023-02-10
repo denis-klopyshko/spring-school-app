@@ -1,8 +1,11 @@
 package com.example.service.impl;
 
-import com.example.dao.jpa.JpaCourseDao;
-import com.example.dao.jpa.JpaGroupDao;
-import com.example.dao.jpa.JpaStudentDao;
+import com.example.dao.CourseDao;
+import com.example.dao.GroupDao;
+import com.example.dao.StudentDao;
+import com.example.dao.impl.CourseDaoImpl;
+import com.example.dao.impl.GroupDaoImpl;
+import com.example.dao.impl.StudentDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
@@ -31,11 +34,11 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
     private static final StudentMapper MAPPER = StudentMapper.INSTANCE;
-    private final JpaStudentDao studentDao;
+    private final StudentDao studentDao;
 
-    private final JpaGroupDao groupDao;
+    private final GroupDao groupDao;
 
-    private final JpaCourseDao courseDao;
+    private final CourseDao courseDao;
 
     @Override
     @Transactional(readOnly = true)

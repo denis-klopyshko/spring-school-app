@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dao.jpa.JpaGroupDao;
+import com.example.dao.impl.GroupDaoImpl;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
 import com.example.entity.Group;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {StudentServiceImpl.class, GroupServiceImpl.class})
 class GroupServiceImplTest {
     @MockBean
-    private JpaGroupDao groupDao;
+    private GroupDaoImpl groupDao;
 
     @MockBean
     private StudentServiceImpl studentService;

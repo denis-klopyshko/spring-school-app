@@ -1,5 +1,8 @@
-package com.example.dao.jpa;
+package com.example.dao;
 
+import com.example.dao.impl.CourseDaoImpl;
+import com.example.dao.impl.GroupDaoImpl;
+import com.example.dao.impl.StudentDaoImpl;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,7 +20,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 })
 @ActiveProfiles("test")
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        JpaStudentDao.class, JpaCourseDao.class, JpaGroupDao.class
+        StudentDaoImpl.class, CourseDaoImpl.class, GroupDaoImpl.class
 }))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class BaseJpaDaoTest {

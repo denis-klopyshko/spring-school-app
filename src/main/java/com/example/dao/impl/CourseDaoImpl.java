@@ -1,4 +1,4 @@
-package com.example.dao.jpa;
+package com.example.dao.impl;
 
 import com.example.dao.CourseDao;
 import com.example.entity.Course;
@@ -18,16 +18,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaCourseDao implements CourseDao {
+public class CourseDaoImpl implements CourseDao {
     public static final String FIND_BY_NAME = "select c from Course c where c.name = :name";
     private static final String FIND_ALL_SQL = "select c from Course c";
     private static final String COUNT_QUERY = "select count(c) from Course c";
-
-    private static final String FIND_COURSES_BY_STUDENT_ID_SQL = "" +
-            "SELECT c.course_id, c.course_name, c.course_description " +
-            "FROM courses c " +
-            "INNER JOIN students_courses sc ON c.course_id = sc.course_id " +
-            "WHERE sc.student_id = :studentId";
 
     @PersistenceContext
     private EntityManager em;
@@ -40,8 +34,13 @@ public class JpaCourseDao implements CourseDao {
 
     @Override
     public List<Course> findAllByStudentId(Long studentId) {
-        Query query = em.createNativeQuery(FIND_COURSES_BY_STUDENT_ID_SQL, Course.class);
-        query.setParameter("studentId", studentId);
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Course> criteriaQuery = criteriaBuilder.createQuery(Course.class);
+        Root<Course> root = criteriaQuery.from(Course.class);
+        Join<Course, Student> studentsJoin = root.join("students");
+        criteriaQuery.select(root)
+                .where(criteriaBuilder.equal(studentsJoin.get("id"), studentId));
+        TypedQuery<Course> query = em.createQuery(criteriaQuery);
         return query.getResultList();
     }
 

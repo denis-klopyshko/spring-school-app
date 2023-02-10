@@ -17,6 +17,7 @@ public class GroupDaoImpl implements GroupDao {
     public static final String FIND_BY_NAME = "select g from Group g where g.name = :name";
     private static final String FIND_ALL_SQL = "select g from Group g";
     private static final String COUNT_QUERY = "select count(g) from Group g";
+    private static final String GET_BY_STUDENTS_COUNT_SQL = "select g from Group g where size(g.students)<= :studentLimit";
 
     @PersistenceContext
     private EntityManager em;
@@ -28,17 +29,10 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
-    public List<Group> findAllWithLessOrEqualStudents(Long studentsQuantity) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Group> criteriaQuery = criteriaBuilder.createQuery(Group.class);
-        Root<Group> root = criteriaQuery.from(Group.class);
-        Join<Group, Student> studentsJoin = root.join(Group_.students, JoinType.LEFT);
-        criteriaQuery.groupBy(root);
-        Expression<Long> count = criteriaBuilder.count(studentsJoin.get(Student_.id));
-        criteriaQuery.having(criteriaBuilder.le(count, studentsQuantity));
-
-        TypedQuery<Group> typedQuery = em.createQuery(criteriaQuery);
-        return typedQuery.getResultList();
+    public List<Group> findAllWithLessOrEqualStudents(Integer studentsQuantity) {
+        return em.createQuery(GET_BY_STUDENTS_COUNT_SQL, Group.class)
+                .setParameter("studentLimit", studentsQuantity)
+                .getResultList();
     }
 
     @Override

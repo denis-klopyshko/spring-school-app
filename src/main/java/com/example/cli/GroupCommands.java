@@ -17,7 +17,7 @@ public class GroupCommands {
     private final ConsoleWriter consoleWriter;
 
     @ShellMethod(value = "Find all Groups with less or equal students.", key = "find-groups")
-    public Table findAllGroupsWithLessOrEqualStudents(Long studentsQuantity) {
+    public Table findAllGroupsWithLessOrEqualStudents(Integer studentsQuantity) {
         List<GroupDto> groups = groupService.findAllWithLessOrEqualStudents(studentsQuantity);
         consoleWriter.printInfo(String.format("Found %s Groups with less than %s or equal Students", groups.size(), studentsQuantity));
         LinkedHashMap<String, Object> headers = new LinkedHashMap<>();

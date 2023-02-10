@@ -9,7 +9,7 @@ import java.util.List;
 public interface GroupService {
     List<GroupDto> findAll();
 
-    List<GroupDto> findAllWithLessOrEqualStudents(@NotNull Long studentsQuantity);
+    List<GroupDto> findAllWithLessOrEqualStudents(@NotNull Integer studentsQuantity);
 
     GroupDto create(@Valid @NotNull GroupDto groupDto);
 

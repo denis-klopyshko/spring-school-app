@@ -82,7 +82,7 @@ class GroupDaoImplTest extends BaseJpaDaoTest {
         List<Group> expected = List.of(
                 new Group(103L, "GR-13")
         );
-        List<Group> actual = groupDao.findAllWithLessOrEqualStudents(0L);
+        List<Group> actual = groupDao.findAllWithLessOrEqualStudents(0);
         assertEquals(expected, actual);
     }
 }

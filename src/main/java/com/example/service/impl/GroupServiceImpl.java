@@ -40,7 +40,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupDto> findAllWithLessOrEqualStudents(Long studentsQuantity) {
+    public List<GroupDto> findAllWithLessOrEqualStudents(Integer studentsQuantity) {
         return groupDao.findAllWithLessOrEqualStudents(studentsQuantity)
                 .stream()
                 .map(MAPPER::mapToDto)

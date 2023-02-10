@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface GroupDao {
     List<Group> findAll();
 
-    List<Group> findAllWithLessOrEqualStudents(Long studentsQuantity);
+    List<Group> findAllWithLessOrEqualStudents(Integer studentsQuantity);
 
     Optional<Group> findById(Long id);
 
@@ -18,7 +18,7 @@ public interface GroupDao {
 
     Group update(Group group);
 
-    boolean deleteById(Long id);
+    void deleteById(Long id);
 
     Long count();
 }

@@ -1,16 +1,15 @@
 package com.example.service;
 
-import com.example.dao.CourseDao;
+import com.example.dao.impl.CourseDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.entity.Course;
 import com.example.exception.ConflictException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.service.impl.CourseServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
@@ -19,12 +18,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {CourseServiceImpl.class})
 class CourseServiceImplTest {
-    @Mock
-    CourseDao courseDao;
+    @MockBean
+    CourseDaoImpl courseDao;
 
-    @InjectMocks
+    @Autowired
     CourseServiceImpl courseService;
 
     @Test
@@ -96,7 +95,7 @@ class CourseServiceImplTest {
     void shouldDeleteCourse() {
         Course course = getCourseEntity();
         when(courseDao.findById(1L)).thenReturn(Optional.of(course));
-        when(courseDao.deleteById(1L)).thenReturn(true);
+        // when(courseDao.deleteById(1L)).thenReturn(true);
 
         courseService.delete(1L);
 

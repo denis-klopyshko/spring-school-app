@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dao.GroupDao;
+import com.example.dao.impl.GroupDaoImpl;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
 import com.example.entity.Group;
@@ -8,11 +8,11 @@ import com.example.exception.ConflictException;
 import com.example.exception.RelationRemovalException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.service.impl.GroupServiceImpl;
+import com.example.service.impl.StudentServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,15 +23,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {StudentServiceImpl.class, GroupServiceImpl.class})
 class GroupServiceImplTest {
-    @Mock
-    private GroupDao groupDao;
+    @MockBean
+    private GroupDaoImpl groupDao;
 
-    @Mock
-    private StudentService studentService;
+    @MockBean
+    private StudentServiceImpl studentService;
 
-    @InjectMocks
+    @Autowired
     private GroupServiceImpl groupService;
 
     @Test
@@ -106,7 +106,7 @@ class GroupServiceImplTest {
         Group group = getGroupEntity();
         when(groupDao.findById(1L)).thenReturn(Optional.of(group));
         when(studentService.findAllByGroupId(1L)).thenReturn(emptyList());
-        when(groupDao.deleteById(1L)).thenReturn(true);
+        //when(groupDao.deleteById(1L)).thenReturn(true);
 
         groupService.delete(1L);
 

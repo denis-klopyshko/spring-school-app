@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dao.GroupDao;
+import com.example.dao.impl.GroupDaoImpl;
 import com.example.dto.GroupDto;
 import com.example.entity.Group;
 import com.example.exception.ConflictException;
@@ -12,6 +12,7 @@ import com.example.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @Validated
 public class GroupServiceImpl implements GroupService {
     private static final GroupMapper MAPPER = GroupMapper.INSTANCE;
@@ -27,7 +29,7 @@ public class GroupServiceImpl implements GroupService {
     private StudentService studentService;
 
     @Autowired
-    private GroupDao groupDao;
+    private GroupDaoImpl groupDao;
 
     @Override
     public List<GroupDto> findAll() {
@@ -38,7 +40,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupDto> findAllWithLessOrEqualStudents(Long studentsQuantity) {
+    public List<GroupDto> findAllWithLessOrEqualStudents(Integer studentsQuantity) {
         return groupDao.findAllWithLessOrEqualStudents(studentsQuantity)
                 .stream()
                 .map(MAPPER::mapToDto)

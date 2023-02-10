@@ -1,12 +1,17 @@
 package com.example.dto;
 
+import com.example.entity.Student;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.matcher.FilterableList;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,6 +28,8 @@ public class CourseDto {
     @Size(max = 255)
     private String description;
 
+    @Builder.Default
+    private List<@NotNull Student> students = new ArrayList<>();
     public static CourseDto ofId(Long courseId) {
         return CourseDto.builder().id(courseId).build();
     }

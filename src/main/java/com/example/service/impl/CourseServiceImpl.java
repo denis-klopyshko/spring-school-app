@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dao.CourseDao;
+import com.example.dao.impl.CourseDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.entity.Course;
 import com.example.exception.ConflictException;
@@ -10,6 +10,7 @@ import com.example.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -17,11 +18,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @Validated
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
     private static final CourseMapper MAPPER = CourseMapper.INSTANCE;
-    private final CourseDao courseDao;
+    private final CourseDaoImpl courseDao;
 
     @Override
     public List<CourseDto> findAll() {

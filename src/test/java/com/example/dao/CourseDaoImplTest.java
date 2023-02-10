@@ -1,14 +1,21 @@
 package com.example.dao;
 
+
+import com.example.dao.impl.CourseDaoImpl;
 import com.example.entity.Course;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CourseDaoTest extends BaseDaoTest {
+class CourseDaoImplTest extends BaseJpaDaoTest {
+    @Autowired
+    private CourseDaoImpl courseDao;
+
     @Test
     void shouldSaveNewCourse() {
         Course savedCourse = courseDao.create(new Course("math", "description"));
@@ -37,8 +44,14 @@ class CourseDaoTest extends BaseDaoTest {
     }
 
     @Test
-    void shouldNotDeleteByNonExistingId() {
-        assertFalse(courseDao.deleteById(9999L));
+    void shouldFindByName() {
+        Optional<Course> course = courseDao.findByName("Math");
+        assertTrue(course.isPresent());
+    }
+
+    @Test
+    void shouldReturnTotalNumberOfEntities() {
+        assertEquals(3, courseDao.count());
     }
 
     @Test
@@ -60,6 +73,16 @@ class CourseDaoTest extends BaseDaoTest {
         );
         List<Course> actual = courseDao.findAll();
 
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindAllByStudentId() {
+        List<Course> expected = List.of(
+                new Course(100L, "Math", "Math Description"),
+                new Course(101L, "Biology", "Biology Description")
+        );
+        List<Course> actual = courseDao.findAllByStudentId(100L);
         assertEquals(expected, actual);
     }
 }

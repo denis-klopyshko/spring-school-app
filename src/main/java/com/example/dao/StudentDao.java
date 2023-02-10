@@ -20,7 +20,7 @@ public interface StudentDao {
 
     Student update(Student student);
 
-    boolean deleteById(Long id);
+    void deleteById(Long id);
 
     boolean assignStudentOnCourse(Long studentId, Long courseId);
 

@@ -1,8 +1,9 @@
 package com.example.dao;
 
+import com.example.dao.impl.GroupDaoImpl;
 import com.example.entity.Group;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,10 +11,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GroupDaoTest extends BaseDaoTest {
+class GroupDaoImplTest extends BaseJpaDaoTest {
+    @Autowired
+    private GroupDaoImpl groupDao;
+
     @Test
     void shouldSaveNewGroup() {
-        Group savedGroup = groupDao.create(new Group(1L, "GR-01"));
+        Group savedGroup = groupDao.create(new Group("GR-01"));
         assertNotNull(savedGroup.getId());
     }
 
@@ -26,6 +30,19 @@ class GroupDaoTest extends BaseDaoTest {
     }
 
     @Test
+    void shouldFindGroupByName() {
+        Optional<Group> actual = groupDao.findByName("GR-12");
+        assertTrue(actual.isPresent());
+        assertEquals("GR-12", actual.get().getName());
+    }
+
+    @Test
+    void shouldNotFindGroupByName() {
+        Optional<Group> actual = groupDao.findByName("GR-18");
+        assertFalse(actual.isPresent());
+    }
+
+    @Test
     void shouldNotFindById() {
         Optional<Group> groupFromDb = groupDao.findById(999L);
         assertFalse(groupFromDb.isPresent());
@@ -35,18 +52,7 @@ class GroupDaoTest extends BaseDaoTest {
     void shouldDeleteById() {
         assertTrue(groupDao.findById(103L).isPresent());
         groupDao.deleteById(103L);
-        assertTrue(courseDao.findById(103L).isEmpty());
-    }
-
-    @Test
-    void shouldNotDeleteByNonExistingId() {
-        assertFalse(groupDao.deleteById(103L));
-    }
-
-    @Test
-    void shouldNotDeleteByIdThrowsException() {
-        assertTrue(groupDao.findById(101L).isPresent());
-        assertThrows(DataIntegrityViolationException.class, () -> groupDao.deleteById(101L));
+        assertTrue(groupDao.findById(103L).isEmpty());
     }
 
     @Test
@@ -68,6 +74,15 @@ class GroupDaoTest extends BaseDaoTest {
                 new Group(103L, "GR-13")
         );
         List<Group> actual = groupDao.findAll();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindAllByStudentsLimit() {
+        List<Group> expected = List.of(
+                new Group(103L, "GR-13")
+        );
+        List<Group> actual = groupDao.findAllWithLessOrEqualStudents(0);
         assertEquals(expected, actual);
     }
 }

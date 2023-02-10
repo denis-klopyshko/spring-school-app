@@ -1,8 +1,8 @@
 package com.example.service;
 
-import com.example.dao.CourseDao;
-import com.example.dao.GroupDao;
-import com.example.dao.StudentDao;
+import com.example.dao.impl.CourseDaoImpl;
+import com.example.dao.impl.GroupDaoImpl;
+import com.example.dao.impl.StudentDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
@@ -12,10 +12,9 @@ import com.example.entity.Student;
 import com.example.exception.ResourceNotFoundException;
 import com.example.service.impl.StudentServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,18 +25,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {StudentServiceImpl.class})
 class StudentServiceImplTest {
-    @Mock
-    CourseDao courseDao;
+    @MockBean
+    CourseDaoImpl courseDao;
 
-    @Mock
-    GroupDao groupDao;
+    @MockBean
+    GroupDaoImpl groupDao;
 
-    @Mock
-    StudentDao studentDao;
+    @MockBean
+    StudentDaoImpl studentDao;
 
-    @InjectMocks
+    @Autowired
     StudentServiceImpl studentService;
 
     @Test

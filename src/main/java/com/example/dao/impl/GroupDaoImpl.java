@@ -1,12 +1,14 @@
 package com.example.dao.impl;
 
 import com.example.dao.GroupDao;
-import com.example.entity.Group;
+import com.example.entity.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,13 +17,6 @@ public class GroupDaoImpl implements GroupDao {
     public static final String FIND_BY_NAME = "select g from Group g where g.name = :name";
     private static final String FIND_ALL_SQL = "select g from Group g";
     private static final String COUNT_QUERY = "select count(g) from Group g";
-
-    private static final String GET_BY_STUDENTS_COUNT_SQL =
-            "SELECT g FROM Group g " +
-                    "LEFT JOIN Student s " +
-                    "ON g.id = s.group.id " +
-                    "GROUP BY g " +
-                    "HAVING count(s) <= :studentLimit";
 
     @PersistenceContext
     private EntityManager em;
@@ -34,9 +29,16 @@ public class GroupDaoImpl implements GroupDao {
 
     @Override
     public List<Group> findAllWithLessOrEqualStudents(Long studentsQuantity) {
-        return em.createQuery(GET_BY_STUDENTS_COUNT_SQL, Group.class)
-                .setParameter("studentLimit", studentsQuantity)
-                .getResultList();
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Group> criteriaQuery = criteriaBuilder.createQuery(Group.class);
+        Root<Group> root = criteriaQuery.from(Group.class);
+        Join<Group, Student> studentsJoin = root.join(Group_.students, JoinType.LEFT);
+        criteriaQuery.groupBy(root);
+        Expression<Long> count = criteriaBuilder.count(studentsJoin.get(Student_.id));
+        criteriaQuery.having(criteriaBuilder.le(count, studentsQuantity));
+
+        TypedQuery<Group> typedQuery = em.createQuery(criteriaQuery);
+        return typedQuery.getResultList();
     }
 
     @Override

@@ -1,12 +1,12 @@
 package com.example.service.impl;
 
-import com.example.dao.impl.GroupDaoImpl;
 import com.example.dto.GroupDto;
 import com.example.entity.Group;
 import com.example.exception.ConflictException;
 import com.example.exception.RelationRemovalException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.mapping.GroupMapper;
+import com.example.repository.GroupRepository;
 import com.example.service.GroupService;
 import com.example.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,22 +26,21 @@ public class GroupServiceImpl implements GroupService {
     private static final GroupMapper MAPPER = GroupMapper.INSTANCE;
 
     @Autowired
-    private StudentService studentService;
+    private GroupRepository groupRepo;
 
-    @Autowired
-    private GroupDaoImpl groupDao;
-
+    @Transactional(readOnly = true)
     @Override
     public List<GroupDto> findAll() {
-        return groupDao.findAll()
+        return groupRepo.findAll()
                 .stream()
                 .map(MAPPER::mapToDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<GroupDto> findAllWithLessOrEqualStudents(Integer studentsQuantity) {
-        return groupDao.findAllWithLessOrEqualStudents(studentsQuantity)
+        return groupRepo.findAllByStudentsIsLessThanOrEqual(studentsQuantity)
                 .stream()
                 .map(MAPPER::mapToDto)
                 .collect(Collectors.toList());
@@ -51,7 +50,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupDto create(GroupDto groupDto) {
         log.info("Creating new group: {}", groupDto);
         validateNameIsUnique(groupDto.getName());
-        Group savedGroup = groupDao.create(MAPPER.mapToEntity(groupDto));
+        Group savedGroup = groupRepo.save(MAPPER.mapToEntity(groupDto));
         return MAPPER.mapToDto(savedGroup);
     }
 
@@ -64,9 +63,10 @@ public class GroupServiceImpl implements GroupService {
         }
 
         MAPPER.updateGroupFromDto(groupDto, groupEntity);
-        return MAPPER.mapToDto(groupDao.update(groupEntity));
+        return MAPPER.mapToDto(groupRepo.save(groupEntity));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public GroupDto findOne(Long groupId) {
         Group groupEntity = findGroupEntity(groupId);
@@ -78,28 +78,28 @@ public class GroupServiceImpl implements GroupService {
         log.info("Deleting group with ID: {}", groupId);
         findGroupEntity(groupId);
         validateNoAssignedStudents(groupId);
-        groupDao.deleteById(groupId);
+        groupRepo.deleteById(groupId);
     }
 
     private void validateNameIsUnique(String name) {
-        groupDao.findByName(name)
+        groupRepo.findByName(name)
                 .ifPresent(cp -> {
                     throw new ConflictException(String.format("Group with name '%s' already exists!", name));
                 });
     }
 
     private Group findGroupEntity(Long id) {
-        return groupDao.findById(id)
+        return groupRepo.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(String.format("Group with id: %s not found!", id))
                 );
     }
 
     private void validateNoAssignedStudents(Long groupId) {
-        var assignedStudents = studentService.findAllByGroupId(groupId);
-        if (!assignedStudents.isEmpty()) {
+        var group = groupRepo.findById(groupId).get();
+        if (!group.getStudents().isEmpty()) {
             throw new RelationRemovalException(
-                    String.format("Can't delete group with assigned students! Students: %s", assignedStudents)
+                    String.format("Can't delete group with assigned students! Students: %s", group.getStudents())
             );
         }
     }

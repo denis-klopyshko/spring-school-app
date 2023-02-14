@@ -1,11 +1,5 @@
 package com.example.service.impl;
 
-import com.example.dao.CourseDao;
-import com.example.dao.GroupDao;
-import com.example.dao.StudentDao;
-import com.example.dao.impl.CourseDaoImpl;
-import com.example.dao.impl.GroupDaoImpl;
-import com.example.dao.impl.StudentDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
@@ -14,6 +8,9 @@ import com.example.entity.Student;
 import com.example.exception.ConflictException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.mapping.StudentMapper;
+import com.example.repository.CourseRepository;
+import com.example.repository.GroupRepository;
+import com.example.repository.StudentRepository;
 import com.example.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,16 +31,16 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
     private static final StudentMapper MAPPER = StudentMapper.INSTANCE;
-    private final StudentDao studentDao;
+    private final StudentRepository studentRepo;
 
-    private final GroupDao groupDao;
+    private final GroupRepository groupRepo;
 
-    private final CourseDao courseDao;
+    private final CourseRepository courseRepo;
 
     @Override
     @Transactional(readOnly = true)
     public List<StudentDto> findAll() {
-        return studentDao.findAll()
+        return studentRepo.findAll()
                 .stream()
                 .map(MAPPER::mapToDto)
                 .collect(Collectors.toList());
@@ -52,7 +49,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional(readOnly = true)
     public List<StudentDto> findAllByGroupId(Long groupId) {
-        return studentDao.findAllByGroupId(groupId)
+        return studentRepo.findAllByGroupId(groupId)
                 .stream()
                 .map(MAPPER::mapToDto)
                 .collect(Collectors.toList());
@@ -61,7 +58,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional(readOnly = true)
     public List<StudentDto> findAllByCourseName(String courseName) {
-        return studentDao.findAllByCourseName(courseName)
+        return studentRepo.findAllByCourses_Name(courseName)
                 .stream()
                 .map(MAPPER::mapToDto)
                 .collect(Collectors.toList());
@@ -73,7 +70,7 @@ public class StudentServiceImpl implements StudentService {
         var studentEntity = MAPPER.mapBaseAttributes(studentDto);
         setStudentGroup(studentDto, studentEntity);
 
-        var createdStudent = studentDao.create(studentEntity);
+        var createdStudent = studentRepo.save(studentEntity);
 
         if (!studentDto.getCourses().isEmpty()) {
             studentDto.getCourses()
@@ -86,7 +83,7 @@ public class StudentServiceImpl implements StudentService {
     private void setStudentGroup(StudentDto studentDto, Student studentEntity) {
         Optional.ofNullable(studentDto.getGroup())
                 .map(GroupDto::getId)
-                .flatMap(groupDao::findById)
+                .flatMap(groupRepo::findById)
                 .ifPresent(studentEntity::setGroup);
     }
 
@@ -96,10 +93,10 @@ public class StudentServiceImpl implements StudentService {
         var student = findStudentEntity(id);
 
         MAPPER.updateStudentFromDto(studentDto, student);
-        var updatedStudent = studentDao.update(student);
+        var updatedStudent = studentRepo.save(student);
 
         if (!studentDto.getCourses().isEmpty()) {
-            studentDao.removeStudentCourses(updatedStudent.getId());
+            student.getCourses().clear();
             studentDto.getCourses()
                     .forEach(courseDto -> assignStudentOnCourse(updatedStudent, courseDto));
         }
@@ -107,6 +104,7 @@ public class StudentServiceImpl implements StudentService {
         return MAPPER.mapToDto(updatedStudent);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public StudentDto findOne(Long id) {
         var studentEntity = findStudentEntity(id);
@@ -117,7 +115,7 @@ public class StudentServiceImpl implements StudentService {
     public void delete(Long studentId) {
         log.info("Deleting student with id: [{}]", studentId);
         findStudentEntity(studentId);
-        studentDao.deleteById(studentId);
+        studentRepo.deleteById(studentId);
     }
 
     @Override
@@ -136,45 +134,39 @@ public class StudentServiceImpl implements StudentService {
         log.info("Assigning student with ID [{}] on course: {}", student.getId(), courseDto);
         Course course = findCourseEntity(courseDto.getId());
 
-        var studentCourses = courseDao.findAllByStudentId(student.getId());
-        boolean alreadyAssigned = studentCourses.stream().anyMatch(c -> c.getId().equals(courseDto.getId()));
-        if (alreadyAssigned) {
+        if(student.getCourses().contains(course)) {
             log.error("Student with ID:[{}] already assigned on course with ID:[{}]", student.getId(), courseDto);
             throw new ConflictException(
                     format("Student with ID:[%s] already assigned on course with ID: [%s]", student.getId(), courseDto.getId())
             );
         }
 
-        studentDao.assignStudentOnCourse(student.getId(), course.getId());
-        student.getCourses().add(course);
+        student.addCourse(course);
     }
 
     private void removeStudentFromCourse(Student student, CourseDto courseDto) {
         log.info("Removing student with ID [{}] from course: {}", student.getId(), courseDto);
         Course course = findCourseEntity(courseDto.getId());
 
-        var studentCourses = courseDao.findAllByStudentId(student.getId());
-        boolean alreadyAssigned = studentCourses.stream().anyMatch(c -> c.getId().equals(courseDto.getId()));
-        if (!alreadyAssigned) {
+        if (!student.getCourses().contains(course)) {
             log.error("Student with ID:[{}] NOT assigned on course with ID:[{}]", student.getId(), courseDto);
             throw new IllegalStateException(
                     format("Student with ID:[%s] NOT assigned on course with ID: [%s]", student.getId(), courseDto.getId())
             );
         }
 
-        studentDao.assignStudentOnCourse(student.getId(), course.getId());
-        student.getCourses().add(course);
+        student.removeCourse(course);
     }
 
     private Student findStudentEntity(Long id) {
-        return studentDao.findById(id)
+        return studentRepo.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(format("Student with id: %s not found!", id))
                 );
     }
 
     private Course findCourseEntity(Long id) {
-        return courseDao.findById(id)
+        return courseRepo.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(format("Course with id: %s not found!", id))
                 );

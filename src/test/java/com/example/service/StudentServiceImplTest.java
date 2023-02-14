@@ -1,8 +1,5 @@
 package com.example.service;
 
-import com.example.dao.impl.CourseDaoImpl;
-import com.example.dao.impl.GroupDaoImpl;
-import com.example.dao.impl.StudentDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.dto.GroupDto;
 import com.example.dto.StudentDto;
@@ -10,6 +7,9 @@ import com.example.entity.Course;
 import com.example.entity.Group;
 import com.example.entity.Student;
 import com.example.exception.ResourceNotFoundException;
+import com.example.repository.CourseRepository;
+import com.example.repository.GroupRepository;
+import com.example.repository.StudentRepository;
 import com.example.service.impl.StudentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {StudentServiceImpl.class})
 class StudentServiceImplTest {
     @MockBean
-    CourseDaoImpl courseDao;
+    CourseRepository courseRepo;
 
     @MockBean
-    GroupDaoImpl groupDao;
+    GroupRepository groupRepo;
 
     @MockBean
-    StudentDaoImpl studentDao;
+    StudentRepository studentRepo;
 
     @Autowired
     StudentServiceImpl studentService;
@@ -45,9 +45,9 @@ class StudentServiceImplTest {
         Course courseEntity = Course.builder().id(1L).name("Math").description("Math Description").build();
         StudentDto newStudentDto = getStudentDto();
 
-        when(studentDao.create(any(Student.class))).thenReturn(student);
-        when(groupDao.findById(anyLong())).thenReturn(Optional.of(new Group()));
-        when(courseDao.findById(anyLong())).thenReturn(Optional.of(courseEntity));
+        when(studentRepo.save(any(Student.class))).thenReturn(student);
+        when(groupRepo.findById(anyLong())).thenReturn(Optional.of(new Group()));
+        when(courseRepo.findById(anyLong())).thenReturn(Optional.of(courseEntity));
 
         StudentDto studentDto = studentService.create(newStudentDto);
 
@@ -61,7 +61,7 @@ class StudentServiceImplTest {
 
     @Test
     void shouldDeleteStudent() {
-        when(studentDao.findById(anyLong())).thenReturn(Optional.empty());
+        when(studentRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> studentService.delete(1L))
                 .isInstanceOf(ResourceNotFoundException.class)

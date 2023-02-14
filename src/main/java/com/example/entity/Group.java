@@ -42,5 +42,15 @@ public class Group {
     public static Group ofId(Long id) {
         return Group.builder().id(id).build();
     }
+
+    public void addStudent(Student student) {
+        student.setGroup(this);
+        this.getStudents().add(student);
+    }
+
+    public void removeStudent(Student student) {
+        student.setGroup(null);
+        this.getStudents().remove(student);
+    }
 }
 

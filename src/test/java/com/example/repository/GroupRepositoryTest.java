@@ -1,8 +1,7 @@
-package com.example.dao;
+package com.example.repository;
 
-import com.example.dao.impl.CourseDaoImpl;
-import com.example.dao.impl.GroupDaoImpl;
-import com.example.dao.impl.StudentDaoImpl;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,8 +19,17 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 })
 @ActiveProfiles("test")
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        StudentDaoImpl.class, CourseDaoImpl.class, GroupDaoImpl.class
+        GroupRepository.class
 }))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class BaseJpaDaoTest {
+class GroupRepositoryTest {
+
+    @Autowired
+    private GroupRepository groupRepository;
+
+
+    @Test
+    void shouldFindAllGroupsByStudentsQuantityLessOrEqual() {
+
+    }
 }

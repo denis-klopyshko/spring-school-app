@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.entity.Group;
+import com.example.entity.Student;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,18 +23,16 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 })
 @ActiveProfiles("test")
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        GroupRepository.class
+        StudentRepository.class
 }))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class GroupRepositoryTest {
-
+class StudentRepositoryTest {
     @Autowired
-    private GroupRepository groupRepository;
+    private StudentRepository studentRepository;
 
     @Test
-    void shouldFindAllGroupsByStudentsQuantityLessOrEqual() {
-        List<Group> groups = groupRepository.findAllByStudentsIsLessThanOrEqual(0);
-        assertEquals(1, groups.size());
-        assertEquals("GR-13", groups.get(0).getName());
+    void shouldFindAllByCourseName() {
+        List<Student> students = studentRepository.findAllByCourseName("Math");
+        assertEquals(1, students.size());
     }
 }

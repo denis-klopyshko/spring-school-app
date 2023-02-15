@@ -58,7 +58,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional(readOnly = true)
     public List<StudentDto> findAllByCourseName(String courseName) {
-        return studentRepo.findAllByCourses_Name(courseName)
+        return studentRepo.findAllByCourseName(courseName)
                 .stream()
                 .map(MAPPER::mapToDto)
                 .collect(Collectors.toList());

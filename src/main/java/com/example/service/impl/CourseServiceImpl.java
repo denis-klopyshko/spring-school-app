@@ -33,6 +33,14 @@ public class CourseServiceImpl implements CourseService {
                 .collect(Collectors.toList());
     }
 
+
+    public List<CourseDto> findAllByStudentId(Long studentId) {
+        return courseRepo.findAllByStudentId(studentId)
+                .stream()
+                .map(MAPPER::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public CourseDto create(CourseDto courseDto) {
         log.info("Creating new course: {}", courseDto);

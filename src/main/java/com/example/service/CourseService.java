@@ -9,6 +9,8 @@ import java.util.List;
 public interface CourseService {
     List<CourseDto> findAll();
 
+    List<CourseDto> findAllByStudentId(@NotNull Long studentId);
+
     CourseDto create(@Valid @NotNull CourseDto courseDto);
 
     CourseDto update(@NotNull Long id, @Valid @NotNull CourseDto courseDto);

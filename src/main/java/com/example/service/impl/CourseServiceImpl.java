@@ -34,6 +34,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
+    @Override
     public List<CourseDto> findAllByStudentId(Long studentId) {
         return courseRepo.findAllByStudentId(studentId)
                 .stream()

@@ -1,11 +1,11 @@
 package com.example.service.impl;
 
-import com.example.dao.impl.CourseDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.entity.Course;
 import com.example.exception.ConflictException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.mapping.CourseMapper;
+import com.example.repository.CourseRepository;
 import com.example.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +23,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
     private static final CourseMapper MAPPER = CourseMapper.INSTANCE;
-    private final CourseDaoImpl courseDao;
+    private final CourseRepository courseRepo;
 
     @Override
     public List<CourseDto> findAll() {
-        return courseDao.findAll()
+        return courseRepo.findAll()
+                .stream()
+                .map(MAPPER::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<CourseDto> findAllByStudentId(Long studentId) {
+        return courseRepo.findAllByStudentId(studentId)
                 .stream()
                 .map(MAPPER::mapToDto)
                 .collect(Collectors.toList());
@@ -39,7 +48,7 @@ public class CourseServiceImpl implements CourseService {
         validateNameIsUnique(courseDto.getName());
         var course = MAPPER.mapToEntity(courseDto);
 
-        return MAPPER.mapToDto(courseDao.create(course));
+        return MAPPER.mapToDto(courseRepo.save(course));
     }
 
     @Override
@@ -51,7 +60,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         MAPPER.updateCourseFromDto(courseDto, courseEntity);
-        return MAPPER.mapToDto(courseDao.update(courseEntity));
+        return MAPPER.mapToDto(courseRepo.save(courseEntity));
     }
 
     @Override
@@ -64,18 +73,18 @@ public class CourseServiceImpl implements CourseService {
     public void delete(Long courseId) {
         log.info("Deleting course with ID [{}]", courseId);
         findCourseEntity(courseId);
-        courseDao.deleteById(courseId);
+        courseRepo.deleteById(courseId);
     }
 
     private void validateNameIsUnique(String name) {
-        courseDao.findByName(name)
+        courseRepo.findByName(name)
                 .ifPresent(cp -> {
                     throw new ConflictException(String.format("Course with name '%s' already exists!", name));
                 });
     }
 
     private Course findCourseEntity(Long id) {
-        return courseDao.findById(id)
+        return courseRepo.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(String.format("Course with id: %s not found!", id))
                 );

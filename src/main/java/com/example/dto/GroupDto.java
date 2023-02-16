@@ -1,10 +1,7 @@
 package com.example.dto;
 
 import com.example.entity.Student;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -26,9 +23,14 @@ public class GroupDto {
     private String name;
 
     @Builder.Default
+    @ToString.Exclude
     private List<@NotNull Student> students = new ArrayList<>();
 
     public static GroupDto ofId(Long id) {
         return GroupDto.builder().id(id).build();
+    }
+
+    public GroupDto(String name) {
+        this.name = name;
     }
 }

@@ -1,10 +1,10 @@
 package com.example.service;
 
-import com.example.dao.impl.CourseDaoImpl;
 import com.example.dto.CourseDto;
 import com.example.entity.Course;
 import com.example.exception.ConflictException;
 import com.example.exception.ResourceNotFoundException;
+import com.example.repository.CourseRepository;
 import com.example.service.impl.CourseServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {CourseServiceImpl.class})
 class CourseServiceImplTest {
     @MockBean
-    CourseDaoImpl courseDao;
+    CourseRepository courseRepo;
 
     @Autowired
     CourseServiceImpl courseService;
@@ -30,8 +30,8 @@ class CourseServiceImplTest {
     void shouldCreateNewCourse() {
         Course course = getCourseEntity();
 
-        when(courseDao.findByName(course.getName())).thenReturn(Optional.empty());
-        when(courseDao.create(any(Course.class))).thenReturn(course);
+        when(courseRepo.findByName(course.getName())).thenReturn(Optional.empty());
+        when(courseRepo.save(any(Course.class))).thenReturn(course);
 
         CourseDto newCourseDto = CourseDto.builder().name("Math").description("Math Description").build();
         CourseDto courseDto = courseService.create(newCourseDto);
@@ -43,14 +43,14 @@ class CourseServiceImplTest {
 
         assertThat(courseDto.getId()).isNotNull();
 
-        verify(courseDao).create(any(Course.class));
+        verify(courseRepo).save(any(Course.class));
     }
 
     @Test
     void shouldNotCreateCourseAlreadyExists() {
         Course courseEntity = getCourseEntity();
 
-        when(courseDao.findByName(anyString())).thenReturn(Optional.of(courseEntity));
+        when(courseRepo.findByName(anyString())).thenReturn(Optional.of(courseEntity));
 
         assertThatThrownBy(() -> courseService.create(CourseDto.builder().name("Math").build()))
                 .isInstanceOf(ConflictException.class)
@@ -59,7 +59,7 @@ class CourseServiceImplTest {
 
     @Test
     void shouldNotUpdateCourseNotFound() {
-        when(courseDao.findById(anyLong())).thenReturn(Optional.empty());
+        when(courseRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> courseService.update(1L, new CourseDto()))
                 .isInstanceOf(ResourceNotFoundException.class)
@@ -73,8 +73,8 @@ class CourseServiceImplTest {
         courseAfterUpdate.setName("Biology");
         courseAfterUpdate.setDescription("Biology Description");
 
-        when(courseDao.findById(anyLong())).thenReturn(Optional.of(courseBeforeUpdate));
-        when(courseDao.update(any(Course.class))).thenReturn(courseAfterUpdate);
+        when(courseRepo.findById(anyLong())).thenReturn(Optional.of(courseBeforeUpdate));
+        when(courseRepo.save(any(Course.class))).thenReturn(courseAfterUpdate);
 
         CourseDto courseDto = courseService.update(1L, CourseDto.builder().id(1L).name("Biology").build());
         assertThat(courseDto.getName()).isEqualTo("Biology");
@@ -83,7 +83,7 @@ class CourseServiceImplTest {
 
     @Test
     void shouldFailToDelete_CourseNotFound() {
-        when(courseDao.findById(1L)).thenReturn(Optional.empty());
+        when(courseRepo.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> courseService.delete(1L))
                 .isInstanceOf(ResourceNotFoundException.class)
@@ -94,12 +94,11 @@ class CourseServiceImplTest {
     @Test
     void shouldDeleteCourse() {
         Course course = getCourseEntity();
-        when(courseDao.findById(1L)).thenReturn(Optional.of(course));
-        // when(courseDao.deleteById(1L)).thenReturn(true);
+        when(courseRepo.findById(course.getId())).thenReturn(Optional.of(course));
 
-        courseService.delete(1L);
+        courseService.delete(course.getId());
 
-        verify(courseDao).deleteById(1L);
+        verify(courseRepo).deleteById(course.getId());
     }
 
     private Course getCourseEntity() {

@@ -1,12 +1,12 @@
 package com.example.service;
 
-import com.example.dao.impl.GroupDaoImpl;
 import com.example.dto.GroupDto;
-import com.example.dto.StudentDto;
 import com.example.entity.Group;
+import com.example.entity.Student;
 import com.example.exception.ConflictException;
 import com.example.exception.RelationRemovalException;
 import com.example.exception.ResourceNotFoundException;
+import com.example.repository.GroupRepository;
 import com.example.service.impl.GroupServiceImpl;
 import com.example.service.impl.StudentServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -26,10 +26,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {StudentServiceImpl.class, GroupServiceImpl.class})
 class GroupServiceImplTest {
     @MockBean
-    private GroupDaoImpl groupDao;
-
-    @MockBean
-    private StudentServiceImpl studentService;
+    private GroupRepository groupRepo;
 
     @Autowired
     private GroupServiceImpl groupService;
@@ -38,21 +35,21 @@ class GroupServiceImplTest {
     void shouldCreateNewGroup() {
         Group group = getGroupEntity();
 
-        when(groupDao.findByName(anyString())).thenReturn(Optional.empty());
-        when(groupDao.create(any(Group.class))).thenReturn(group);
+        when(groupRepo.findByName(anyString())).thenReturn(Optional.empty());
+        when(groupRepo.save(any(Group.class))).thenReturn(group);
 
         GroupDto groupDto = groupService.create(GroupDto.builder().name("GR-10").build());
         assertThat(groupDto.getName()).isEqualTo("GR-10");
         assertThat(groupDto.getId()).isEqualTo(1L);
 
-        verify(groupDao).create(any(Group.class));
+        verify(groupRepo).save(any(Group.class));
     }
 
     @Test
     void shouldNotCreateGroupAlreadyExists() {
         Group group = getGroupEntity();
 
-        when(groupDao.findByName(anyString())).thenReturn(Optional.of(group));
+        when(groupRepo.findByName(anyString())).thenReturn(Optional.of(group));
 
         assertThatThrownBy(() -> groupService.create(GroupDto.builder().name("GR-10").build()))
                 .isInstanceOf(ConflictException.class)
@@ -61,7 +58,7 @@ class GroupServiceImplTest {
 
     @Test
     void shouldNotUpdateGroupNotFound() {
-        when(groupDao.findById(1L)).thenReturn(Optional.empty());
+        when(groupRepo.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> groupService.update(1L, GroupDto.builder().id(1L).name("GR-10").build()))
                 .isInstanceOf(ResourceNotFoundException.class)
@@ -74,8 +71,8 @@ class GroupServiceImplTest {
         Group groupAfterUpdate = getGroupEntity();
         groupAfterUpdate.setName("GR-11");
 
-        when(groupDao.findById(groupBeforeUpdate.getId())).thenReturn(Optional.of(groupBeforeUpdate));
-        when(groupDao.update(any(Group.class))).thenReturn(groupAfterUpdate);
+        when(groupRepo.findById(groupBeforeUpdate.getId())).thenReturn(Optional.of(groupBeforeUpdate));
+        when(groupRepo.save(any(Group.class))).thenReturn(groupAfterUpdate);
 
         GroupDto groupDto = groupService.update(1L, GroupDto.builder().id(1L).name("GR-11").build());
         assertThat(groupDto.getName()).isEqualTo("GR-11");
@@ -83,7 +80,7 @@ class GroupServiceImplTest {
 
     @Test
     void shouldFailToDelete_groupNotFound() {
-        when(groupDao.findById(1L)).thenReturn(Optional.empty());
+        when(groupRepo.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> groupService.delete(1L))
                 .isInstanceOf(ResourceNotFoundException.class)
@@ -93,8 +90,8 @@ class GroupServiceImplTest {
     @Test
     void shouldFailToDelete_assignedStudents() {
         Group group = getGroupEntity();
-        when(groupDao.findById(1L)).thenReturn(Optional.of(group));
-        when(studentService.findAllByGroupId(1L)).thenReturn(List.of(new StudentDto()));
+        when(groupRepo.findById(1L)).thenReturn(Optional.of(group));
+        when(group.getStudents()).thenReturn(List.of(new Student()));
 
         assertThatThrownBy(() -> groupService.delete(1L))
                 .isInstanceOf(RelationRemovalException.class)
@@ -104,13 +101,12 @@ class GroupServiceImplTest {
     @Test
     void shouldDeleteGroup() {
         Group group = getGroupEntity();
-        when(groupDao.findById(1L)).thenReturn(Optional.of(group));
-        when(studentService.findAllByGroupId(1L)).thenReturn(emptyList());
-        //when(groupDao.deleteById(1L)).thenReturn(true);
+        when(groupRepo.findById(1L)).thenReturn(Optional.of(group));
+        when(group.getStudents()).thenReturn(emptyList());
 
         groupService.delete(1L);
 
-        verify(groupDao).deleteById(1L);
+        verify(groupRepo).deleteById(1L);
     }
 
     private Group getGroupEntity() {
